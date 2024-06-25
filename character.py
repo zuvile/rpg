@@ -3,6 +3,8 @@ from pyray import *
 from object import Object
 
 class Character(Object):
+    attack = 10
+    defence = 10
     def __init__(self, texture, sub_texture, scale, x=0, y=0, size=32):
         super().__init__(x, y, size)
         self.texture = texture

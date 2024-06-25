@@ -14,6 +14,13 @@ def blocked_by_object(obj, map, dx, dy):
     return False
 
 
+def should_init_fight(player, map):
+    enemies = map['enemies']
+    for enemy in enemies:
+        if check_collision_recs(player.rec, enemy.rec):
+            return True
+
+
 def off_the_window(obj, dx, dy):
     new_x = obj.rec.x + dx
     new_y = obj.rec.y + dy

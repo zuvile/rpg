@@ -11,7 +11,6 @@ class Object:
         if self.can_move(dx, dy, map):
             self.rec.x += dx
             self.rec.y += dy
-
     def can_move(self, dx, dy, map):
         if off_the_window(self, dx, dy) or blocked_by_object(self, map, dx, dy):
             return False

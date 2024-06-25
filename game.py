@@ -16,6 +16,7 @@ while not window_should_close():
     if action == Actions.EXPLORE:
         action = explore_state.draw(player)
     if action == Actions.FIGHT:
+        # todo separate map to its own class
         action = fight_state.draw(explore_state.map['enemies'][0])
     end_drawing()
 close_window()

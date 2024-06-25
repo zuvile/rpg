@@ -5,31 +5,28 @@ from actions import *
 
 class FightState(GameState):
     def __init__(self):
-            self.cursor_index = 0
-            self.prev_key_w_state = False
-            self.prev_key_s_state = False
-            self.prev_key_enter_state = False
-            self.end_of_fight = False
-            self.message = "You are in a fight!"
-            self.final_message = ""
+        self.cursor_index = 0
+        self.prev_key_w_state = False
+        self.prev_key_s_state = False
+        self.prev_key_enter_state = False
+        self.end_of_fight = False
+        self.message = "You are in a fight!"
+        self.final_message = ""
 
     def draw(self, player, map):
         draw_texture(load_texture('assets/fight.png'), 0, 0, WHITE)
         player.draw()
         enemy = map.enemies[0]
         enemy.draw()
-        x = 640
-        y = 65
 
         if self.end_of_fight:
             draw_text(self.final_message, 2 * 32, 10 * 32, 32, GREEN)
             if is_key_down(KEY_ENTER) and not self.prev_key_enter_state:
                 self.end_of_fight = False
                 return Actions.EXPLORE
+
         options = ["ATTACK", "SPELL", "RUN AWAY"]
-        draw_text("Player HP: " + str(player.hp), 2 * 32, 12 * 32, 32, RED)
-        draw_text("Enemy HP: " + str(enemy.hp), 2 * 32, 13 * 32, 32, RED)
-        draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
+        self.draw_ui(player, enemy, options)
 
         key_w_state = is_key_down(KEY_W)
         key_s_state = is_key_down(KEY_S)
@@ -61,15 +58,23 @@ class FightState(GameState):
         self.prev_key_s_state = key_s_state
         self.prev_key_enter_state = key_enter_state
 
+
+
+        return Actions.FIGHT
+
+    def draw_ui(self, player, enemy, options):
+        x = 640
+        y = 65
+
         for index, option in enumerate(options):
             colour = RED
             if self.cursor_index == index:
                 colour = GREEN
             draw_text(option, x, y, 20, colour)
             y += 32
-
-        return Actions.FIGHT
-
+        draw_text("Player HP: " + str(player.hp), 2 * 32, 12 * 32, 32, RED)
+        draw_text("Enemy HP: " + str(enemy.hp), 2 * 32, 13 * 32, 32, RED)
+        draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
 
     def move_cursor(self, curr, length, direction):
         if (direction == "UP"):

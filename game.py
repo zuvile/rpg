@@ -2,6 +2,7 @@ from pyray import *
 from player import Player
 from explore_state import ExploreState
 from fight_state import FightState
+from dialogue_state import DialogueState
 from actions import Actions
 from map import Map
 
@@ -11,6 +12,7 @@ player = Player(3 * 32, 3 * 32)
 action = Actions.EXPLORE
 explore_state = ExploreState()
 fight_state = FightState()
+dialogue_state = DialogueState()
 map = Map()
 
 
@@ -22,5 +24,7 @@ while not window_should_close():
     if action == Actions.FIGHT:
         # todo separate map to its own class
         action = fight_state.draw(player, map)
+    if action == Actions.DIALOGUE:
+        action = dialogue_state.draw(player, map)
     end_drawing()
 close_window()

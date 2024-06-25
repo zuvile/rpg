@@ -21,6 +21,13 @@ def should_init_fight(player, map):
             return True
 
 
+def should_init_dialogue(player, map):
+    friends = map.friends
+    for friend in friends:
+        if check_collision_recs(player.rec, friend.rec):
+            return True
+
+
 def off_the_window(obj, dx, dy):
     new_x = obj.rec.x + dx
     new_y = obj.rec.y + dy

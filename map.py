@@ -1,12 +1,15 @@
 from enemy import Enemy
+from friendly import Friendly
 from wall import Wall
 
 class Map():
     enemies = []
     walls = []
+    friends = []
     def __init__(self):
         self.add_walls()
         self.add_enemies()
+        self.add_friends()
 
     def add_walls(self):
         y = 0
@@ -18,6 +21,9 @@ class Map():
                     self.walls.append(Wall(x * 32, y * 32))
                 x += 1
             y += 1
+
+    def add_friends(self):
+        self.friends.append(Friendly(3 * 32, 6 * 32))
 
     def add_enemies(self):
         self.enemies.append(Enemy(5 * 32, 5 * 32))

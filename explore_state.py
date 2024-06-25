@@ -12,6 +12,9 @@ class ExploreState(GameState):
             wall.draw()
         for enemy in map.enemies:
             enemy.draw()
+        for friend in map.friends:
+            friend.draw()
+
         action = player.move(map)
 
         return action

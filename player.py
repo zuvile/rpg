@@ -1,5 +1,5 @@
 from character import Character
-from collision import should_init_fight
+from collision import should_init_fight, should_init_dialogue
 from pyray import *
 from actions import *
 
@@ -29,5 +29,7 @@ class Player(Character):
             self.rec.y += dy
         if should_init_fight(self, map):
             return Actions.FIGHT
+        if should_init_dialogue(self, map):
+            return Actions.DIALOGUE
         else:
             return Actions.EXPLORE

@@ -1,16 +1,15 @@
 from pyray import *
+import cProfile
 
 from character import Character
 from wall import Wall
 
-init_window(900, 540, "Game")
+init_window(800, 480, "Game")
 set_target_fps(60)
 player = Character(0,0)
 map = {
     'walls': []
 }
-
-map_texture = load_texture('assets/tiled_map.png')
 
 def add_walls():
     y = 0
@@ -23,10 +22,14 @@ def add_walls():
             x += 1
         y += 1
 
+map_texture = load_texture('assets/tiled_map.png')
+add_walls()
+
+
+
 
 while not window_should_close():
     begin_drawing()
-    add_walls()
     draw_texture(map_texture, 0, 0, WHITE)
     for wall in map['walls']:
         wall.draw()

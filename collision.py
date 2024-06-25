@@ -2,8 +2,6 @@ from pyray import *
 
 
 # todo solve circular import when trying to import Object in collision.py
-
-
 def blocked_by_object(obj, map, dx, dy):
     new_x = obj.rec.x + dx
     new_y = obj.rec.y + dy
@@ -14,6 +12,7 @@ def blocked_by_object(obj, map, dx, dy):
         if check_collision_recs(rec, wall.rec):
             return True
     return False
+
 
 def off_the_window(obj, dx, dy):
     new_x = obj.rec.x + dx

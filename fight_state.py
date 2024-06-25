@@ -35,27 +35,30 @@ class FightState(GameState):
 
         if key_enter_state and not self.prev_key_enter_state:
             if options[self.cursor_index] == "ATTACK":
-                dmg = player.do_attack()
-                self.message = "You attacked for " + str(dmg) + " damage"
-                draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
-                enemy.apply_damage(dmg)
-                if not enemy.is_alive():
-                    self.final_message = "You won the fight!"
-                    self.end_of_fight = True
-                else:
-                    dmg = enemy.do_attack()
-                    self.message = "Enemy attacked for " + str(dmg) + " damage"
-                    draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
-                    player.apply_damage(dmg)
-                    if not player.is_alive():
-                        self.final_message = "You lost the fight!"
-                        self.end_of_fight = True
+                self.handle_attack(player, enemy)
 
         self.prev_key_w_state = key_w_state
         self.prev_key_s_state = key_s_state
         self.prev_key_enter_state = key_enter_state
 
         return Actions.FIGHT
+
+    def handle_attack(self, player, enemy):
+        dmg = player.do_attack()
+        self.message = "You attacked for " + str(dmg) + " damage"
+        draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
+        enemy.apply_damage(dmg)
+        if not enemy.is_alive():
+            self.final_message = "You won the fight!"
+            self.end_of_fight = True
+        else:
+            dmg = enemy.do_attack()
+            self.message = "Enemy attacked for " + str(dmg) + " damage"
+            draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
+            player.apply_damage(dmg)
+            if not player.is_alive():
+                self.final_message = "You lost the fight!"
+                self.end_of_fight = True
 
     def draw_ui(self, player, enemy, options):
         x = 640

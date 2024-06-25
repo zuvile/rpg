@@ -12,6 +12,7 @@ class FightState(GameState):
             self.prev_key_enter_state = False
             self.end_of_fight = False
             self.message = "You are in a fight!"
+            self.final_message = ""
 
     def draw(self, enemy):
         draw_texture(load_texture('assets/fight.png'), 0, 0, WHITE)
@@ -21,7 +22,7 @@ class FightState(GameState):
         y = 65
 
         if self.end_of_fight:
-            draw_text("You won! Press Enter to continue", 2 * 32, 10 * 32, 32, GREEN)
+            draw_text(self.final_message, 2 * 32, 10 * 32, 32, GREEN)
             if is_key_down(KEY_ENTER) and not self.prev_key_enter_state:
                 self.end_of_fight = False
                 return Actions.EXPLORE
@@ -45,7 +46,16 @@ class FightState(GameState):
                 draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
                 enemy.apply_damage(dmg)
                 if not enemy.is_alive():
+                    self.final_message = "You won the fight!"
                     self.end_of_fight = True
+                else:
+                    dmg = enemy.do_attack()
+                    self.message = "Enemy attacked for " + str(dmg) + " damage"
+                    draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
+                    self.player.apply_damage(dmg)
+                    if not self.player.is_alive():
+                        self.final_message = "You lost the fight!"
+                        self.end_of_fight = True
 
         self.prev_key_w_state = key_w_state
         self.prev_key_s_state = key_s_state

@@ -4,8 +4,7 @@ from actions import *
 
 
 class FightState(GameState):
-    def __init__(self, player):
-            self.player = player
+    def __init__(self):
             self.cursor_index = 0
             self.prev_key_w_state = False
             self.prev_key_s_state = False
@@ -14,9 +13,10 @@ class FightState(GameState):
             self.message = "You are in a fight!"
             self.final_message = ""
 
-    def draw(self, enemy):
+    def draw(self, player, map):
         draw_texture(load_texture('assets/fight.png'), 0, 0, WHITE)
-        self.player.draw()
+        player.draw()
+        enemy = map.enemies[0]
         enemy.draw()
         x = 640
         y = 65
@@ -27,7 +27,7 @@ class FightState(GameState):
                 self.end_of_fight = False
                 return Actions.EXPLORE
         options = ["ATTACK", "SPELL", "RUN AWAY"]
-        draw_text("Player HP: " + str(self.player.hp), 2 * 32, 12 * 32, 32, RED)
+        draw_text("Player HP: " + str(player.hp), 2 * 32, 12 * 32, 32, RED)
         draw_text("Enemy HP: " + str(enemy.hp), 2 * 32, 13 * 32, 32, RED)
         draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
 
@@ -41,7 +41,7 @@ class FightState(GameState):
 
         if key_enter_state and not self.prev_key_enter_state:
             if options[self.cursor_index] == "ATTACK":
-                dmg = self.player.do_attack()
+                dmg = player.do_attack()
                 self.message = "You attacked for " + str(dmg) + " damage"
                 draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
                 enemy.apply_damage(dmg)
@@ -52,8 +52,8 @@ class FightState(GameState):
                     dmg = enemy.do_attack()
                     self.message = "Enemy attacked for " + str(dmg) + " damage"
                     draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
-                    self.player.apply_damage(dmg)
-                    if not self.player.is_alive():
+                    player.apply_damage(dmg)
+                    if not player.is_alive():
                         self.final_message = "You lost the fight!"
                         self.end_of_fight = True
 

@@ -5,6 +5,7 @@ from player import Player
 
 class ExploreState(GameState):
     def draw(self, player: Player, map):
+        map.clear_dead()
         texture = load_texture('assets/tiled_map.png')
         draw_texture(texture, 0, 0, WHITE)
         player.draw()

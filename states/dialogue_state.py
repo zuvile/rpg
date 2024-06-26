@@ -1,5 +1,4 @@
-from explore_state import ExploreState
-from game_state import GameState
+from states.game_state import GameState
 from pyray import *
 from actions import *
 

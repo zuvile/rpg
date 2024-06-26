@@ -1,4 +1,4 @@
-from game_state import GameState
+from states.game_state import GameState
 from pyray import *
 from actions import *
 
@@ -14,7 +14,7 @@ class FightState(GameState):
         self.final_message = ""
 
     def draw(self, player, map):
-        draw_texture(load_texture('assets/fight.png'), 0, 0, WHITE)
+        draw_texture(load_texture('assets/tiled_map.png'), 0, 0, WHITE)
         player.draw()
         enemy = map.enemies[0]
         enemy.draw()

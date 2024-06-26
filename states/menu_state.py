@@ -1,32 +1,30 @@
-from game_state import GameState
+from states.game_state import GameState
 from pyray import *
-from actions import *
+
 
 class MenuState(GameState):
-    def __init__(self):
+    def __init__(self, options, option_handlers, action):
+        self.options = options
         self.cursor_index = 0
         self.prev_key_w_state = False
         self.prev_key_s_state = False
         self.prev_key_enter_state = False
+        self.option_handlers = option_handlers
+        self.action = action
 
     def draw(self, player=None, map=None):
-        options = ["NEW GAME", "LOAD GAME", "EXIT"]
-        self.draw_ui(options)
+        self.draw_ui(self.options)
         key_w_state = is_key_down(KEY_W)
         key_s_state = is_key_down(KEY_S)
         key_enter_state = is_key_down(KEY_ENTER)
-
-        print(self.cursor_index, len(options))
-        self.move_cursor(self.cursor_index, len(options), key_w_state, key_s_state)
+        self.move_cursor(self.cursor_index, len(self.options), key_w_state, key_s_state)
         if key_enter_state:
-            if options[self.cursor_index] == "NEW GAME":
-                return Actions.EXPLORE
-            # todo other actions
+            return self.option_handlers[self.cursor_index]()
         self.prev_key_w_state = key_w_state
         self.prev_key_s_state = key_s_state
         self.prev_key_enter_state = key_enter_state
 
-        return Actions.MENU
+        return self.action
 
     def draw_ui(self, options):
         draw_rectangle(0, 0, 800, 600, BLACK)

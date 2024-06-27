@@ -6,9 +6,6 @@ from actions import *
 class FightState(GameState):
     def __init__(self):
         self.cursor_index = 0
-        self.prev_key_w_state = False
-        self.prev_key_s_state = False
-        self.prev_key_enter_state = False
         self.end_of_fight = False
         self.message = "You are in a fight!"
         self.final_message = ""
@@ -22,25 +19,17 @@ class FightState(GameState):
 
         if self.end_of_fight:
             draw_text(self.final_message, 2 * 32, 10 * 32, 32, GREEN)
-            if is_key_down(KEY_ENTER) and not self.prev_key_enter_state:
+            if is_key_pressed(KEY_ENTER):
                 self.end_of_fight = False
                 return Actions.EXPLORE
 
         options = ["ATTACK", "SPELL", "RUN AWAY"]
         self.draw_ui(player, enemy, options)
 
-        key_w_state = is_key_down(KEY_W)
-        key_s_state = is_key_down(KEY_S)
-        key_enter_state = is_key_down(KEY_ENTER)
-        self.move_cursor(self.cursor_index, len(options), key_w_state, key_s_state)
+        self.move_cursor(self.cursor_index, len(options))
 
-        if key_enter_state and not self.prev_key_enter_state:
-            if options[self.cursor_index] == "ATTACK":
-                self.handle_attack(player, enemy)
-
-        self.prev_key_w_state = key_w_state
-        self.prev_key_s_state = key_s_state
-        self.prev_key_enter_state = key_enter_state
+        if is_key_pressed(KEY_ENTER) and options[self.cursor_index] == "ATTACK":
+            self.handle_attack(player, enemy)
 
         return Actions.FIGHT
 
@@ -75,10 +64,8 @@ class FightState(GameState):
         draw_text("Enemy HP: " + str(enemy.hp), 2 * 32, 13 * 32, 32, RED)
         draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
 
-    def move_cursor(self, curr, length, key_w_state, key_s_state):
-        if ((key_w_state and not self.prev_key_w_state) or
-                (key_s_state and not self.prev_key_s_state)):
-            if (key_w_state):
-                self.cursor_index = (curr - 1) % length
-            if (key_s_state):
-                self.cursor_index = (curr + 1) % length
+    def move_cursor(self, curr, length):
+        if is_key_pressed(KEY_W):
+            self.cursor_index = (curr - 1) % length
+        if is_key_pressed(KEY_S):
+            self.cursor_index = (curr + 1) % length

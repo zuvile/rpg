@@ -16,24 +16,23 @@ class DialogueState(GameState):
     def draw(self, player, map):
         friend = map.friends[0]
         self.draw_scene(friend)
-        if self.tree.jmp is not None:
-            self.write_text()
-            if is_key_pressed(KEY_ENTER):
-                self.tree = self.trees[self.tree.jmp]
-        else:
-            if len(self.tree.children) == 1:
-                self.write_text()
-            if len(self.tree.children) > 1:
-                self.write_text()
-                self.write_choices()
-                self.move_cursor()
-                self.make_choice(friend)
-            if len(self.tree.children) == 0:
-                self.write_text()
-                if is_key_pressed(KEY_ENTER):
-                    return Actions.EXPLORE
-            if is_key_pressed(KEY_ENTER):
-                self.tree = self.tree.children[0]
+
+        self.write_text()
+
+        if self.tree.jmp is not None and is_key_pressed(KEY_ENTER):
+            self.tree = self.trees[self.tree.jmp]
+            return Actions.DIALOGUE
+
+        if len(self.tree.children) > 1:
+            self.write_choices()
+            self.move_cursor()
+            self.make_choice(friend)
+
+        if len(self.tree.children) == 0 and is_key_pressed(KEY_ENTER):
+            return Actions.EXPLORE
+
+        if is_key_pressed(KEY_ENTER):
+            self.tree = self.tree.children[0]
 
         return Actions.DIALOGUE
 
@@ -61,6 +60,10 @@ class DialogueState(GameState):
             # todo don't split in the middle of the word
             draw_text(text[:32], 2 * 32, 12 * 32, 15, WHITE)
             draw_text(text[32:], 2 * 32, 13 * 32, 15, WHITE)
+        if is_key_pressed(KEY_ENTER):
+            draw_rectangle(0, 352, 800, 128, BLACK)
+            self.write_choices()
+
 
     def move_cursor(self):
         if is_key_pressed(KEY_W):

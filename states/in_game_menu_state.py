@@ -3,6 +3,7 @@ from actions import Actions
 
 class InGameMenuState(MenuState):
     def __init__(self):
+
         options = ["SAVE", "LOAD", "EXIT"]
         option_handlers = {
             0: self.save_game,

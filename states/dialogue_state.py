@@ -8,38 +8,37 @@ class DialogueState(GameState):
     def __init__(self):
         self.portrait_texture = load_texture('assets/portraits/cassius.png')
         self.dialogue = Dialogue()
-        self.tree = self.dialogue.load_dialogue_tree()
+        self.trees = self.dialogue.load_dialogue_trees()
+        first_key = next(iter(self.trees))
+        self.tree = self.trees[first_key]
         self.cursor_index = 0
 
     def draw(self, player, map):
-        draw_rectangle(0, 0, 200, 32, RAYWHITE)
         friend = map.friends[0]
-        draw_text("Rel pts:" + str(friend.rel), 0, 0, 20, BLACK)
-        draw_rectangle(0, 352, 800, 128, BLACK)
-        sub_texture = Rectangle(48, 0, 46, 64)
-        scale = 2
-        origin = Vector2(0, 0)
-        portrait_width = sub_texture.width * scale
-        x = get_screen_width() - portrait_width
-        destination = Rectangle(x, 353, sub_texture.width * scale, sub_texture.height * scale)
-        draw_texture_pro(self.portrait_texture, sub_texture, destination, origin, 0, WHITE)
-        if len(self.tree.children) == 1:
-            self.write_text()
-        if len(self.tree.children) > 1:
-            self.write_choices()
-            self.move_cursor()
-            self.make_choice(friend)
-        if len(self.tree.children) == 0:
+        self.draw_scene(friend)
+        if self.tree.jmp is not None:
             self.write_text()
             if is_key_pressed(KEY_ENTER):
-                return Actions.EXPLORE
-        if is_key_pressed(KEY_ENTER):
-            self.tree = self.tree.children[0]
+                self.tree = self.trees[self.tree.jmp]
+        else:
+            if len(self.tree.children) == 1:
+                self.write_text()
+            if len(self.tree.children) > 1:
+                self.write_text()
+                self.write_choices()
+                self.move_cursor()
+                self.make_choice(friend)
+            if len(self.tree.children) == 0:
+                self.write_text()
+                if is_key_pressed(KEY_ENTER):
+                    return Actions.EXPLORE
+            if is_key_pressed(KEY_ENTER):
+                self.tree = self.tree.children[0]
 
         return Actions.DIALOGUE
 
     def write_choices(self):
-        y = 12 * 32
+        y = 13 * 32
         idx = 0
         for choices in self.tree.children:
             color = GREEN if idx == self.cursor_index else WHITE
@@ -55,6 +54,7 @@ class DialogueState(GameState):
 
     def write_text(self):
         text = self.tree.text
+        print(text)
         if len(text) < 62:
             draw_text(self.tree.text, 2 * 32, 12 * 32, 15, WHITE)
         else:
@@ -67,4 +67,16 @@ class DialogueState(GameState):
             self.cursor_index = (self.cursor_index - 1) % len(self.tree.children)
         if is_key_pressed(KEY_S):
             self.cursor_index = (self.cursor_index + 1) % len(self.tree.children)
+
+    def draw_scene(self, friend):
+        draw_rectangle(0, 0, 200, 32, RAYWHITE)
+        draw_text("Rel pts:" + str(friend.rel), 0, 0, 20, BLACK)
+        draw_rectangle(0, 352, 800, 128, BLACK)
+        sub_texture = Rectangle(48, 0, 46, 64)
+        scale = 2
+        origin = Vector2(0, 0)
+        portrait_width = sub_texture.width * scale
+        x = get_screen_width() - portrait_width
+        destination = Rectangle(x, 353, sub_texture.width * scale, sub_texture.height * scale)
+        draw_texture_pro(self.portrait_texture, sub_texture, destination, origin, 0, WHITE)
 

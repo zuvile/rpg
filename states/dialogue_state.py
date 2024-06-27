@@ -1,3 +1,4 @@
+from friendly import Friendly
 from states.game_state import GameState
 from pyray import *
 from actions import *
@@ -11,6 +12,9 @@ class DialogueState(GameState):
         self.cursor_index = 0
 
     def draw(self, player, map):
+        draw_rectangle(0, 0, 200, 32, RAYWHITE)
+        friend = map.friends[0]
+        draw_text("Rel pts:" + str(friend.rel), 0, 0, 20, BLACK)
         draw_rectangle(0, 352, 800, 128, BLACK)
         sub_texture = Rectangle(48, 0, 46, 64)
         scale = 2
@@ -24,7 +28,7 @@ class DialogueState(GameState):
         if len(self.tree.children) > 1:
             self.write_choices()
             self.move_cursor()
-            self.make_choice()
+            self.make_choice(friend)
         if len(self.tree.children) == 0:
             self.write_text()
             if is_key_pressed(KEY_ENTER):
@@ -43,8 +47,10 @@ class DialogueState(GameState):
             y += 32
             idx += 1
 
-    def make_choice(self):
+    def make_choice(self, friend: Friendly):
         if is_key_pressed(KEY_ENTER):
+            friend.rel += self.tree.children[self.cursor_index].rel_mod
+            print(self.tree.children[self.cursor_index].rel_mod)
             self.tree = self.tree.children[self.cursor_index]
 
     def write_text(self):

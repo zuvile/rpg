@@ -37,3 +37,4 @@ while not window_should_close():
         action = dialogue_state.draw(player, map)
     end_drawing()
 close_window()
+

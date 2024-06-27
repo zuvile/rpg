@@ -1,0 +1,5 @@
+title: introduction_cassius
+---
+Cassius: Hello. I haven't seen you here before. My name is Cassius.
+Cassius: I have no time to chat to newcomers. One thing though... It would be unwise to go outside until you're ready.
+===

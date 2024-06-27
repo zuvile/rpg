@@ -12,9 +12,10 @@ class FightState(GameState):
         self.end_of_fight = False
         self.message = "You are in a fight!"
         self.final_message = ""
+        self.texture = load_texture('assets/fight.png')
 
     def draw(self, player, map):
-        draw_texture(load_texture('assets/tiled_map.png'), 0, 0, WHITE)
+        draw_texture(self.texture, 0, 0, WHITE)
         player.draw()
         enemy = map.enemies[0]
         enemy.draw()

@@ -12,31 +12,30 @@ class DialogueState(GameState):
         first_key = next(iter(self.trees))
         self.tree = self.trees[first_key]
         self.cursor_index = 0
+        self.curr_page = 0
+        self.done_reading = True
 
     def draw(self, player, map):
         friend = map.friends[0]
         self.draw_scene(friend)
-
-        self.write_text()
-
-        if self.tree.jmp is not None and is_key_pressed(KEY_ENTER):
-            self.tree = self.trees[self.tree.jmp]
-            return Actions.DIALOGUE
-
-        if len(self.tree.children) > 1:
-            self.write_choices()
-            self.move_cursor()
-            self.make_choice(friend)
-
-        if len(self.tree.children) == 0 and is_key_pressed(KEY_ENTER):
-            return Actions.EXPLORE
-
-        if is_key_pressed(KEY_ENTER):
-            self.tree = self.tree.children[0]
+        idx = self.write_text(friend)
+        if self.done_reading:
+            return self.advance_to_next_node(idx)
 
         return Actions.DIALOGUE
 
+    def advance_to_next_node(self, idx):
+        if self.tree.jmp is not None:
+            self.tree = self.trees[self.tree.jmp]
+            return Actions.DIALOGUE
+        if len(self.tree.children) == 0:
+            return Actions.EXPLORE
+
+        self.tree = self.tree.children[idx]
+        return Actions.DIALOGUE
+
     def write_choices(self):
+        self.done_reading = False
         y = 13 * 32
         idx = 0
         for choices in self.tree.children:
@@ -48,21 +47,27 @@ class DialogueState(GameState):
     def make_choice(self, friend: Friendly):
         if is_key_pressed(KEY_ENTER):
             friend.rel += self.tree.children[self.cursor_index].rel_mod
-            print(self.tree.children[self.cursor_index].rel_mod)
-            self.tree = self.tree.children[self.cursor_index]
+            self.done_reading = True
+            return self.cursor_index
 
-    def write_text(self):
-        text = self.tree.text
-        print(text)
-        if len(text) < 62:
-            draw_text(self.tree.text, 2 * 32, 12 * 32, 15, WHITE)
-        else:
-            # todo don't split in the middle of the word
-            draw_text(text[:32], 2 * 32, 12 * 32, 15, WHITE)
-            draw_text(text[32:], 2 * 32, 13 * 32, 15, WHITE)
-        if is_key_pressed(KEY_ENTER):
-            draw_rectangle(0, 352, 800, 128, BLACK)
+    # Write text and choices. Return 0 if no choice was made, otherwise return choice index
+    def write_text(self, friend):
+        pages = [self.tree.text[i:i+64] for i in range(0, len(self.tree.text), 64)]
+        if self.curr_page == len(pages) and len(self.tree.children) > 1:
             self.write_choices()
+            self.move_cursor()
+            return self.make_choice(friend)
+
+        elif self.curr_page >= len(pages):
+            self.curr_page = 0
+            self.done_reading = True
+            return 0
+        else:
+            self.done_reading = False
+        draw_text(pages[self.curr_page], 2 * 32, 13 * 32, 15, WHITE)
+        if is_key_pressed(KEY_ENTER):
+            self.curr_page += 1
+        return 0
 
 
     def move_cursor(self):
@@ -77,6 +82,7 @@ class DialogueState(GameState):
         draw_rectangle(0, 352, 800, 128, BLACK)
         sub_texture = Rectangle(48, 0, 46, 64)
         scale = 2
+
         origin = Vector2(0, 0)
         portrait_width = sub_texture.width * scale
         x = get_screen_width() - portrait_width

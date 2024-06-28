@@ -9,6 +9,12 @@ class Player(Character):
         texture = load_texture('assets/player.png')
         sub_texture = Rectangle(0, 0, 32, 32)
         scale = 2
+        self.attack = 10
+        self.ac = 5
+        self.hp = 30
+        self.magic = 1
+        self.mana = 10
+        self.dead = False
 
         super().__init__(texture, sub_texture, scale, x, y)
 
@@ -33,3 +39,6 @@ class Player(Character):
             return Actions.DIALOGUE
         else:
             return Actions.EXPLORE
+
+    def increase_magic_skill(self, modifier):
+        self.magic += modifier

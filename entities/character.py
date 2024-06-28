@@ -31,3 +31,8 @@ class Character(Entity):
 
     def do_attack(self):
         return random.randint(0, self.attack)
+
+    def add_health(self, health):
+        self.hp += health
+        if self.hp > 30:
+            self.hp = 30

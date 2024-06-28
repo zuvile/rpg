@@ -16,7 +16,6 @@ class ExploreState(GameState):
         map.clear_dead()
         draw_texture(self.texture, 0, 0, WHITE)
         player.draw()
-        print(map)
         for wall in map.walls:
             wall.draw()
         for enemy in map.enemies:

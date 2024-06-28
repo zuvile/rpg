@@ -3,15 +3,17 @@ from states.game_state import GameState
 from pyray import *
 from actions import *
 from dialogue import Dialogue
+from cursor import Cursor
 
-class DialogueState(GameState):
+class DialogueState(GameState, Cursor):
     def __init__(self):
+        super().__init__()
         self.portrait_texture = load_texture('assets/portraits/cassius.png')
         self.dialogue = Dialogue()
         self.trees = self.dialogue.load_dialogue_trees()
         first_key = next(iter(self.trees))
         self.tree = self.trees[first_key]
-        self.cursor_index = 0
+
         self.curr_page = 0
         self.done_reading = True
 
@@ -55,7 +57,7 @@ class DialogueState(GameState):
         pages = [self.tree.text[i:i+64] for i in range(0, len(self.tree.text), 64)]
         if self.curr_page == len(pages) and len(self.tree.children) > 1:
             self.write_choices()
-            self.move_cursor()
+            self.move_cursor(len(self.tree.children))
             return self.make_choice(friend)
 
         elif self.curr_page >= len(pages):
@@ -68,13 +70,6 @@ class DialogueState(GameState):
         if is_key_pressed(KEY_ENTER):
             self.curr_page += 1
         return 0
-
-
-    def move_cursor(self):
-        if is_key_pressed(KEY_W):
-            self.cursor_index = (self.cursor_index - 1) % len(self.tree.children)
-        if is_key_pressed(KEY_S):
-            self.cursor_index = (self.cursor_index + 1) % len(self.tree.children)
 
     def draw_scene(self, friend):
         draw_rectangle(0, 0, 200, 32, RAYWHITE)

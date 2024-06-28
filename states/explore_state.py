@@ -1,6 +1,6 @@
 from states.game_state import GameState
 from pyray import *
-from player import Player
+from entities.player import Player
 from actions import *
 
 
@@ -16,6 +16,7 @@ class ExploreState(GameState):
         map.clear_dead()
         draw_texture(self.texture, 0, 0, WHITE)
         player.draw()
+        print(map)
         for wall in map.walls:
             wall.draw()
         for enemy in map.enemies:

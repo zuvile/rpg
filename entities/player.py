@@ -1,4 +1,4 @@
-from character import Character
+from entities.character import Character
 from collision import should_init_fight, should_init_dialogue
 from pyray import *
 from actions import *

@@ -2,7 +2,7 @@ from pyray import *
 from collision import off_the_window, blocked_by_object
 
 # base class for any object
-class Object:
+class Entity:
     def __init__(self, x, y, size):
         self.size = size
         self.rec = Rectangle(x, y, size, size)

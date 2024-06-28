@@ -1,5 +1,5 @@
 from pyray import *
-from player import Player
+from entities.player import Player
 from states.explore_state import ExploreState
 from states.fight_state import FightState
 from states.dialogue_state import DialogueState

@@ -1,4 +1,4 @@
-from character import Character
+from entities.character import Character
 from pyray import *
 
 class Enemy(Character):

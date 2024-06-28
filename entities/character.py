@@ -1,9 +1,9 @@
 from pyray import *
 import random
+from entities.entity import Entity
 
-from object import Object
 
-class Character(Object):
+class Character(Entity):
     attack = 10
     ac = 5
     hp = 20

@@ -1,5 +1,5 @@
 from pyray import *
-from character import Character
+from entities.character import Character
 
 
 class Friendly(Character):

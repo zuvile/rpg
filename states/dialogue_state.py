@@ -1,4 +1,4 @@
-from friendly import Friendly
+from entities.friendly import Friendly
 from states.game_state import GameState
 from pyray import *
 from actions import *

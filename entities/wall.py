@@ -1,8 +1,8 @@
 from pyray import *
-from object import Object
+from entities.entity import Entity
 
 
-class Wall(Object):
+class Wall(Entity):
     def __init__(self, x, y, size=32):
         super().__init__(x, y, size)
     def draw(self):

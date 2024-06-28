@@ -1,6 +1,6 @@
-from enemy import Enemy
-from friendly import Friendly
-from wall import Wall
+from entities.enemy import Enemy
+from entities.friendly import Friendly
+from entities.wall import Wall
 
 class Map():
     enemies = []

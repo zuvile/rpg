@@ -19,8 +19,8 @@ class DialogueTree:
 
 
 class Dialogue:
-    def load_dialogue_trees(self):
-        file = open('dialogue.txt', 'r')
+    def load_dialogue_trees(self, file_name='dialogue.txt'):
+        file = open(file_name, 'r')
         lines = file.readlines()
         dict = {}
         self.read_dialogue_chunks(lines, 0, dict, [])

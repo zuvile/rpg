@@ -6,6 +6,7 @@ class Map():
     enemies = []
     walls = []
     friends = []
+
     def __init__(self):
         self.add_walls()
         self.add_enemies()
@@ -32,3 +33,6 @@ class Map():
         for enemy in self.enemies:
             if not enemy.is_alive():
                 self.enemies.remove(enemy)
+
+    def update(self):
+        self.clear_dead()

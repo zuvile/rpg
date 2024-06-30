@@ -1,12 +1,13 @@
 from entities.character import Character
+from entities.rectangle import Rectangle
 from collision import should_init_fight, should_init_dialogue
-from pyray import *
+import pyray as rl
 from actions import *
 
 
 class Player(Character):
     def __init__(self, x=0, y=0):
-        texture = load_texture('assets/player.png')
+        texture = 'assets/player.png'
         sub_texture = Rectangle(0, 0, 32, 32)
         scale = 2
         self.attack = 10
@@ -14,18 +15,20 @@ class Player(Character):
         self.hp = 30
         self.magic = 1
         self.mana = 10
+        self.x = x
+        self.y = y
         self.dead = False
 
         super().__init__(texture, sub_texture, scale, x, y)
 
     def move(self, map):
-        if is_key_down(KEY_W):
+        if rl.is_key_down(rl.KEY_W):
             return self.move_player(0, -2, map)
-        if is_key_down(KEY_S):
+        if rl.is_key_down(rl.KEY_S):
             return self.move_player(0, 2, map)
-        if is_key_down(KEY_A):
+        if rl.is_key_down(rl.KEY_A):
             return self.move_player(-2, 0, map)
-        if is_key_down(KEY_D):
+        if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, map)
         return Actions.EXPLORE
 
@@ -42,3 +45,4 @@ class Player(Character):
 
     def increase_magic_skill(self, modifier):
         self.magic += modifier
+

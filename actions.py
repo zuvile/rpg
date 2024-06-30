@@ -8,3 +8,6 @@ class Actions(Enum):
     INITIAL_MENU = 4
     IN_GAME_MENU = 5
     EXIT = 6
+    CREATE_NEW_SAVE_FILE = 7
+    LOAD_SAVE_FILE = 8
+    SAVE_GAME = 9

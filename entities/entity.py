@@ -1,4 +1,4 @@
-from pyray import *
+from entities.rectangle import Rectangle
 from collision import off_the_window, blocked_by_object
 
 # base class for any object

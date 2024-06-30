@@ -1,40 +1,52 @@
 from pyray import *
-from entities.player import Player
-from states.explore_state import ExploreState
-from states.fight_state import FightState
-from states.dialogue_state import DialogueState
-from states.initial_menu_state import InitialMenuState
-from states.in_game_menu_state import InGameMenuState
+from modes.explore_mode import ExploreMode
+from modes.fight_mode import FightMode
+from modes.dialogue_mode import DialogueMode
+from modes.initial_menu_mode import InitialMenuMode
+from modes.in_game_menu_mode import InGameMenuMode
 from actions import Actions
-from map import Map
+from save import Save
 
 init_window(800, 480, "Game")
 set_target_fps(60)
-player = Player(3 * 32, 3 * 32)
 action = Actions.INITIAL_MENU
-explore_state = ExploreState()
-fight_state = FightState()
-dialogue_state = DialogueState()
-initial_menu_state = InitialMenuState()
-in_game_menu_state = InGameMenuState()
-map = Map()
+explore_mode = ExploreMode()
+fight_mode = FightMode()
+dialogue_mode = DialogueMode()
+initial_menu_mode = InitialMenuMode()
+in_game_menu_mode = InGameMenuMode()
+save = Save()
 set_exit_key(KEY_NULL)
+game_state = None
 
 while not window_should_close():
     begin_drawing()
     if action == Actions.EXIT:
         end_drawing()
         break
+    if action == Actions.CREATE_NEW_SAVE_FILE:
+        game_state = save.create_new()
+        action = Actions.EXPLORE
+    if action == Actions.LOAD_SAVE_FILE:
+        game_state = save.load()
+        action = Actions.EXPLORE
+    if action == Actions.SAVE_GAME:
+        save.save(game_state)
+        action = Actions.EXPLORE
     if action == Actions.INITIAL_MENU:
-        action = initial_menu_state.draw()
-    if action == Actions.IN_GAME_MENU:
-        action = in_game_menu_state.draw()
-    if action == Actions.EXPLORE:
-        action = explore_state.draw(player, map)
-    if action == Actions.FIGHT:
-        action = fight_state.draw(player, map)
-    if action == Actions.DIALOGUE:
-        action = dialogue_state.draw(player, map)
+        action = initial_menu_mode.draw(None)
+
+
+    if game_state is not None:
+        if action == Actions.EXPLORE:
+            game_state.map.update()
+            action = explore_mode.draw(game_state)
+        if action == Actions.FIGHT:
+            action = fight_mode.draw(game_state)
+        if action == Actions.DIALOGUE:
+            action = dialogue_mode.draw(game_state)
+        if action == Actions.IN_GAME_MENU:
+            action = in_game_menu_mode.draw(game_state)
     end_drawing()
 close_window()
 

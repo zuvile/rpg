@@ -3,11 +3,10 @@ from entities.friendly import Friendly
 from entities.wall import Wall
 
 class Map():
-    enemies = []
-    walls = []
-    friends = []
-
     def __init__(self):
+        self.enemies = []
+        self.walls = []
+        self.friends = []
         self.add_walls()
         self.add_enemies()
         self.add_friends()
@@ -24,7 +23,9 @@ class Map():
             y += 1
 
     def add_friends(self):
-        self.friends.append(Friendly(3 * 32, 6 * 32))
+        self.friends.append(Friendly('Cassius', 3 * 32, 6 * 32))
+        self.friends.append(Friendly('Mother', 3 * 32, 8 * 32))
+        self.friends.append(Friendly('Master', 3 * 32, 10 * 32))
 
     def add_enemies(self):
         self.enemies.append(Enemy(5 * 32, 5 * 32))

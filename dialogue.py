@@ -14,7 +14,7 @@ class DialogueTree:
         self.speaker = speaker
         self.children = children
         self.parent = None
-        self.rel_mod = 0
+        self.rel_mods = {}
         self.jmp = None
         self.render = None
 
@@ -41,7 +41,7 @@ class Dialogue:
             return self.handle_end_choices(idx, lines, prev, root)
         if re.match("(.*): (.*)", line):
             return self.handle_speaker_dialogue(idx, lines, prev, root, line)
-        if re.match("(\\$rel_mod=.*)", line):
+        if re.match("(\\$rel_mod.*)", line):
             return self.handle_rel_mod(idx, lines, prev, root, line)
         if re.match("(\\$jmp=.*)", line):
             return self.handle_jmp(idx, lines, prev, root, line)
@@ -81,9 +81,10 @@ class Dialogue:
         return self.create_tree(idx + 1, lines, new_node, root)
 
     def handle_rel_mod(self, idx, lines, prev, root, line):
-        _, modifier = line.split('=')
-        prev.rel_mod = int(modifier)
-        print(prev.rel_mod)
+        match = re.search("\\((.*?)\\)=(-?\\d+)", line)
+        char_name = match.group(1)
+        modifier = match.group(2)
+        prev.rel_mods[char_name] = int(modifier)
         return self.create_tree(idx + 1, lines, prev, root)
 
     def handle_jmp(self, idx, lines, prev, root, line):

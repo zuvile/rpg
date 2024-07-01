@@ -15,7 +15,6 @@ class Save:
         if action == Actions.LOAD_SAVE_FILE:
             return self.load()
 
-
     def create_new(self):
         map = Map()
         player = Player(3 * 32, 3 * 32)

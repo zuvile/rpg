@@ -3,11 +3,11 @@ Cassius: Hello. I haven't seen you here before. My name is Cassius.
 $render=portrait_cassius.png
 Cassius: I have no time to chat to newcomers. One thing though... It would be unwise to go outside until you're ready.
     -> Don't tell me what to do.
-        $rel_mod=-10
+        $rel_mod(Cassius)=-10
         Cassius: Ah, I see how it is. Well, don't let me stand in the way of your untimely death.
         end_choices
     -> I see. Thank you.
-        $rel_mod=10
+        $rel_mod(Cassius)=10
         Cassius: Did you get the chance to see the ceremony room?
         $jmp=cassius_ceremony_room
         end_choices

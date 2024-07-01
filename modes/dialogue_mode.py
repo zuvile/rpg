@@ -21,7 +21,7 @@ class DialogueMode(GameMode, Cursor):
         map = game_state.map
         friend = map.friends[0]
         self.draw_scene(friend)
-        idx = self.write_text(friend)
+        idx = self.write_text(game_state)
         if self.done_reading:
             return self.advance_to_next_node(idx)
 
@@ -47,19 +47,24 @@ class DialogueMode(GameMode, Cursor):
             y += 32
             idx += 1
 
-    def make_choice(self, friend: Friendly):
+    def make_choice(self, game_state):
         if is_key_pressed(KEY_ENTER):
-            friend.rel += self.tree.children[self.cursor_index].rel_mod
+            rel_mods = self.tree.children[self.cursor_index].rel_mods
+            #there's a better way to do this
+            for key, value in rel_mods.items():
+                for friend in game_state.map.friends:
+                    if friend.name == key:
+                        friend.rel += value
             self.done_reading = True
             return self.cursor_index
 
     # Write text and choices. Return 0 if no choice was made, otherwise return choice index
-    def write_text(self, friend):
+    def write_text(self, game_state):
         pages = [self.tree.text[i:i+64] for i in range(0, len(self.tree.text), 64)]
         if self.curr_page == len(pages) and len(self.tree.children) > 1:
             self.write_choices()
             self.move_cursor(len(self.tree.children))
-            return self.make_choice(friend)
+            return self.make_choice(game_state)
 
         elif self.curr_page >= len(pages):
             self.curr_page = 0
@@ -73,6 +78,9 @@ class DialogueMode(GameMode, Cursor):
         return 0
 
     def draw_scene(self, friend):
+        if self.tree.render is not None:
+            texture = load_texture('assets/backgrounds/' + self.tree.render)
+            draw_texture(texture, 0, 0, WHITE)
         draw_rectangle(0, 0, 200, 32, RAYWHITE)
         draw_text("Rel pts:" + str(friend.rel), 0, 0, 20, BLACK)
         draw_rectangle(0, 352, 800, 128, BLACK)

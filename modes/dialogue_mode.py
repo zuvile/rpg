@@ -4,11 +4,11 @@ from pyray import *
 from actions import *
 from dialogue import Dialogue
 from cursor import Cursor
+import textures
 
 class DialogueMode(GameMode, Cursor):
     def __init__(self):
         super().__init__()
-        self.portrait_texture = load_texture('assets/portraits/cassius.png')
         self.dialogue = Dialogue()
         self.trees = self.dialogue.load_dialogue_trees()
         first_key = next(iter(self.trees))
@@ -91,5 +91,7 @@ class DialogueMode(GameMode, Cursor):
         portrait_width = sub_texture.width * scale
         x = get_screen_width() - portrait_width
         destination = Rectangle(x, 300, sub_texture.width * scale, sub_texture.height * scale)
-        draw_texture_pro(self.portrait_texture, sub_texture, destination, origin, 0, WHITE)
+        textures.load_texture(friend.portrait)
+        portrait_texture = textures.id_to_raylib(friend.portrait)
+        draw_texture_pro(portrait_texture, sub_texture, destination, origin, 0, WHITE)
 

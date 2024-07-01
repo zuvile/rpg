@@ -19,6 +19,7 @@ class Save:
         map = Map()
         player = Player(3 * 32, 3 * 32)
         game_state = GameState(map, player)
+        game_state.advance_day()
 
         return game_state
 

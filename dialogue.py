@@ -20,6 +20,9 @@ class DialogueTree:
 
 
 class Dialogue:
+    def __init__(self):
+        self.trees = self.load_dialogue_trees()
+
     def load_dialogue_trees(self, file_name='dialogue.txt'):
         file = open(file_name, 'r')
         lines = file.readlines()
@@ -30,6 +33,13 @@ class Dialogue:
             tree = self.create_tree(0, chunk, None)
             trees[key] = tree
         return trees
+
+    def get_dialogue_for_character(self, character_name):
+        dialogues = {}
+        for key, tree in self.trees.items():
+            if key.startswith(character_name.lower()):
+                dialogues[key] = tree
+        return dialogues
 
     def create_tree(self, idx, lines, prev, root=None):
         if idx >= len(lines):

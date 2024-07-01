@@ -43,6 +43,5 @@ def off_the_window(obj, dx, dy):
     new_y = obj.rec.y + dy
     if 0 <= new_x <= (rl.get_screen_width() - obj.size) and 0 <= new_y <= (
             rl.get_screen_height() - obj.size):
-
         return False
     return True

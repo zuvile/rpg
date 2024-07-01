@@ -1,23 +1,30 @@
 from modes.game_mode import GameMode
 from pyray import *
 from actions import *
-from dialogue import Dialogue
 from cursor import Cursor
 import textures
 
 class DialogueMode(GameMode, Cursor):
     def __init__(self):
         super().__init__()
-        self.dialogue = Dialogue()
-        self.trees = self.dialogue.load_dialogue_trees()
-        first_key = next(iter(self.trees))
-        self.tree = self.trees[first_key]
-
+        self.first_key = ''
+        self.trees = []
+        self.tree = None
         self.curr_page = 0
         self.done_reading = True
+        self.tree = None
+        self.del_keys = []
 
     def draw(self, game_state):
         friend = game_state.get_interactable()
+        self.trees = friend.get_dialogue_trees()
+        if not self.trees:
+            return self.write_nothing_say()
+        if self.tree is None:
+            self.first_key = next(iter(self.trees))
+            self.del_keys.append(self.first_key)
+            self.tree = self.trees[self.first_key]
+
         self.draw_scene(friend)
         idx = self.write_text(game_state)
         if self.done_reading:
@@ -27,13 +34,19 @@ class DialogueMode(GameMode, Cursor):
 
     def advance_to_next_node(self, idx):
         if self.tree.jmp is not None:
+            self.del_keys.append(self.tree.jmp)
             self.tree = self.trees[self.tree.jmp]
             return Actions.DIALOGUE
         if len(self.tree.children) == 0:
+            self.remove_read_dialogue()
             return Actions.EXPLORE
 
         self.tree = self.tree.children[idx]
         return Actions.DIALOGUE
+
+    def remove_read_dialogue(self):
+        for key in self.del_keys:
+            del self.trees[key]
 
     def write_choices(self):
         self.done_reading = False
@@ -70,10 +83,19 @@ class DialogueMode(GameMode, Cursor):
             return 0
         else:
             self.done_reading = False
+        draw_text(game_state.get_interactable().name.upper(), 2 * 32, 12 * 32, 15, SKYBLUE)
         draw_text(pages[self.curr_page], 2 * 32, 13 * 32, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
             self.curr_page += 1
         return 0
+
+    def write_nothing_say(self):
+        draw_rectangle(0, 352, 800, 128, BLACK)
+        draw_text("There's nothing to talk about now", 2 * 32, 13 * 32, 15, WHITE)
+        if is_key_pressed(KEY_ENTER):
+            return Actions.EXPLORE
+        else:
+            return Actions.DIALOGUE
 
     def draw_scene(self, friend):
         if self.tree.render is not None:

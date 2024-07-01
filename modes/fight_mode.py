@@ -19,8 +19,7 @@ class FightMode(GameMode, Cursor):
         draw_texture(self.texture, 0, 0, WHITE)
         player = game_state.player
         player.draw()
-        map = game_state.map
-        enemy = map.enemies[0]
+        enemy = game_state.get_interactable()
         enemy.draw()
 
         if self.end_of_fight:

@@ -7,7 +7,7 @@ class Entity:
         self.size = size
         self.rec = Rectangle(x, y, size, size)
             
-    def can_move(self, dx, dy, map):
-        if off_the_window(self, dx, dy) or blocked_by_object(self, map, dx, dy):
+    def can_move(self, dx, dy, game_state):
+        if off_the_window(self, dx, dy) or blocked_by_object(self, game_state, dx, dy):
             return False
         return True

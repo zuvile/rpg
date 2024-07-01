@@ -1,4 +1,3 @@
-from entities.friendly import Friendly
 from modes.game_mode import GameMode
 from pyray import *
 from actions import *
@@ -18,8 +17,7 @@ class DialogueMode(GameMode, Cursor):
         self.done_reading = True
 
     def draw(self, game_state):
-        map = game_state.map
-        friend = map.friends[0]
+        friend = game_state.get_interactable()
         self.draw_scene(friend)
         idx = self.write_text(game_state)
         if self.done_reading:

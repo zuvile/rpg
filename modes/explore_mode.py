@@ -24,6 +24,6 @@ class ExploreMode(GameMode):
         for friend in map.friends:
             friend.draw()
 
-        action = player.move(map)
+        action = player.move(game_state)
 
         return action

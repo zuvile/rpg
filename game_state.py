@@ -23,4 +23,4 @@ class GameState:
     def advance_day(self):
         self.day += 1
         for friend in self.map.friends:
-            friend.update_dialogue_trees(self.dialogue.get_dialogue_for_character(friend.name))
+            friend.update_dialogue_trees()

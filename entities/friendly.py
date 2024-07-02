@@ -1,5 +1,6 @@
 from entities.character import Character
 from entities.rectangle import Rectangle
+from dialogue import Dialogue
 
 class Friendly(Character):
     def __init__(self, name, portrait, x=0, y=0):
@@ -13,7 +14,9 @@ class Friendly(Character):
 
         super().__init__(texture, sub_texture, scale, x, y)
 
-    def update_dialogue_trees(self, trees):
+    def update_dialogue_trees(self):
+        dialogue = Dialogue()
+        trees = dialogue.load_dialogue_trees('cassius_dialogues.txt')
         self.dialogue_trees = trees
 
     def get_dialogue_trees(self):

@@ -4,6 +4,7 @@ from modes.fight_mode import FightMode
 from modes.dialogue_mode import DialogueMode
 from modes.initial_menu_mode import InitialMenuMode
 from modes.in_game_menu_mode import InGameMenuMode
+from modes.story_mode import StoryMode
 from actions import Actions
 from save import Save
 
@@ -15,6 +16,8 @@ fight_mode = FightMode()
 dialogue_mode = DialogueMode()
 initial_menu_mode = InitialMenuMode()
 in_game_menu_mode = InGameMenuMode()
+story_mode = StoryMode()
+
 save = Save()
 set_exit_key(KEY_NULL)
 game_state = None
@@ -26,7 +29,7 @@ while not window_should_close():
         break
     if action == Actions.CREATE_NEW_SAVE_FILE:
         game_state = save.create_new()
-        action = Actions.EXPLORE
+        action = Actions.STORY
     if action == Actions.LOAD_SAVE_FILE:
         game_state = save.load()
         action = Actions.EXPLORE
@@ -43,6 +46,8 @@ while not window_should_close():
             action = explore_mode.draw(game_state)
         if action == Actions.FIGHT:
             action = fight_mode.draw(game_state)
+        if action == Actions.STORY:
+            action = story_mode.draw(game_state)
         if action == Actions.DIALOGUE:
             action = dialogue_mode.draw(game_state)
         if action == Actions.IN_GAME_MENU:

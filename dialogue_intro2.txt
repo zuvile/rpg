@@ -1,7 +1,7 @@
 title: game_intro
-    Narrator: [You stand in an old cemetery. It's raining. The air is filled with the smell of dirt and rotting leaves.]
+    Narrator: You stand in an old cemetery. It's raining. The air is filled with the smell of dirt and rotting leaves.
     $render=cemetery.png
-    Narrator: [Barely anyone has shown up. No one is speaking as the casket is being lowered into the ground.]
+    Narrator: Barely anyone has shown up. No one is speaking as the casket is being lowered into the ground.
     Player: I hate funerals. Especially when I hardly knew the person.
     Player: ...
     Player: I wonder if I can skip the dinner and go home.
@@ -43,32 +43,31 @@ title: castle_intro
             Cassius: Keep quiet.
         end_choices
         -> [Say nothing]
-            Narrator: You are too scared to speak.
         end_choices
     Narrator: you are brought into a room where an old man is sitting behind a desk.
     Cassius: master. This... woman... Appeared just now, and look what she was holding.
     Master: Show me, Cassius.
     Player: [I note the name of the cold man.]
-    Narrator: [Cassius rips the card from your hand and shows it to the old man. His eyes widen.]
-    Master: Did you bind the card to yourself, woman?
+    Narrator: Cassius rips the card from your hand and shows it to the old man. His eyes widen.
+    Master[Old man]: Did you bind the card to yourself, woman?
     Player: I don't know what you're talking about... I touched it and... Appeared here.
-    Narrator: [The men share a look. It's obvious that your words mean something to them that you can't yet comprehend.]
+    Narrator: The men share a look. It's obvious that your words mean something to them that you can't yet comprehend.
     Master: Then there's only one thing to do.
     Player: [I shudder. My hands are still bound and I can barely move.]
         -> Please. I just want to go home.
-            $rel_mod(Cassius)=10
-            Narrator: [Cassius looks at you with a hint of sympathy. If even he is sorry for you... What is going to happen?]
+        $rel_mod(Cassius)=10
+            Narrator: Cassius looks at you with a hint of sympathy. If even he is sorry for you... What is going to happen?
             end_choices
         -> Are you kidding me? What are you two on about? Let me go this instant. I'm calling the police.
-            Narrator: [As you reach inside your pocket, you realise there is no pocket. In fact, you are wearing clothes that you do not recognise.]
+            Narrator: As you reach inside your pocket, you realise there is no pocket. In fact, you are wearing clothes that you do not recognise.
             end_choices
-    Master: You will become a student here, woman. That is the only thing we can do.
+    Master[Old man]: You will become a student here, woman. That is the only thing we can do.
     Cassius: Other than to kill you.
     Player: What...
     $render = black.png
-    Narrator: [You feel yourself slip into a slumber like state. As you close your eyes, your thoughts drift away to your aunt that you barely knew.]
-    Narrator: [What is the card that she had left you?]
-    Narrator: [And what will happen when you wake up...?]
+    Narrator: You feel yourself slip into a slumber like state. As you close your eyes, your thoughts drift away to your aunt that you barely knew.
+    Narrator: What is the card that she had left you?
+    Narrator: And what will happen when you wake up...?
 
 
 

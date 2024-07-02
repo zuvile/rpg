@@ -5,7 +5,7 @@ from actions import *
 from cursor import Cursor
 
 class TalkMode(GameMode, Cursor):
-    def __init__(self):
+    def __init__(self, mode):
         super().__init__()
         self.curr_page = 0
         self.done_reading = True
@@ -13,6 +13,7 @@ class TalkMode(GameMode, Cursor):
         self.trees = []
         self.del_keys = []
         self.current_interactable = None
+        self.mode = mode
 
     def set_dialogue_trees(self, trees):
         if not self.trees:
@@ -29,23 +30,24 @@ class TalkMode(GameMode, Cursor):
 
         self.draw_scene()
         idx = self.write_text(game_state)
-        self.draw_portrait()
+        if self.current_interactable is not None:
+            self.draw_portrait()
         if self.done_reading:
             return self.advance_to_next_node(idx)
 
-        return Actions.DIALOGUE
+        return self.mode
 
     def advance_to_next_node(self, idx):
         if self.tree.jmp is not None:
             self.del_keys.append(self.tree.jmp)
             self.tree = self.trees[self.tree.jmp]
-            return Actions.DIALOGUE
+            return self.mode
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
             return Actions.EXPLORE
 
         self.tree = self.tree.children[idx]
-        return Actions.DIALOGUE
+        return self.mode
 
     def remove_read_dialogue(self):
         for key in self.del_keys:
@@ -87,7 +89,8 @@ class TalkMode(GameMode, Cursor):
             return 0
         else:
             self.done_reading = False
-        draw_text(game_state.get_interactable().name.upper(), 2 * 32, 12 * 32, 15, SKYBLUE)
+        if self.current_interactable is not None:
+            draw_text(self.current_interactable.name.upper(), 2 * 32, 12 * 32, 15, SKYBLUE)
         draw_text(pages[self.curr_page], 2 * 32, 13 * 32, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
             self.curr_page += 1
@@ -99,6 +102,8 @@ class TalkMode(GameMode, Cursor):
             if friend.name.lower() == speaker.lower():
                 self.current_interactable = friend
                 return
+        self.current_interactable = None
+        return
 
     def draw_portrait(self):
         draw_rectangle(0, 0, 200, 32, RAYWHITE)
@@ -119,7 +124,7 @@ class TalkMode(GameMode, Cursor):
         if is_key_pressed(KEY_ENTER):
             return Actions.EXPLORE
         else:
-            return Actions.DIALOGUE
+            return self.mode
 
     def draw_scene(self):
         if self.tree.render is not None:

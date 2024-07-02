@@ -23,7 +23,7 @@ class Dialogue:
     def __init__(self):
         self.trees = self.load_dialogue_trees()
 
-    def load_dialogue_trees(self, file_name='dialogue.txt'):
+    def load_dialogue_trees(self, file_name='dialogue_intro.txt'):
         file = open(file_name, 'r')
         lines = file.readlines()
         dict = {}
@@ -82,8 +82,16 @@ class Dialogue:
 
     def handle_speaker_dialogue(self, idx, lines, prev, root, line):
         speaker, dialogue = line.split(': ')
+
         new_node = DialogueTree(dialogue, speaker)
-        if prev is not None:
+
+        if prev is not None and len(prev.children) > 1:
+            for child in prev.children:
+                while len(child.children) > 0:
+                    child = child.children[0]
+                child.children.append(new_node)
+
+        elif prev is not None:
             prev.children.append(new_node)
             new_node.parent = prev
         if root is None:
@@ -112,11 +120,10 @@ class Dialogue:
         prev.render = line.split('=')[1]
         return self.create_tree(idx + 1, lines, prev, root)
 
-
 def main():
-    d = Dialogue()
-    d.load_dialogue_trees()
-
+    dialogue = Dialogue()
+    trees = dialogue.load_dialogue_trees('dialogue_intro.txt')
+    print(trees)
 
 if __name__ == '__main__':
     main()

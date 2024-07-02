@@ -11,6 +11,8 @@ Cassius: I have no time to chat to newcomers. One thing though... It would be un
         Cassius: Did you get the chance to see the ceremony room?
         $jmp=cassius_ceremony_room
         end_choices
+Narrator: continue the story
+Narrator: Continue more
 
 title: cassius_ceremony_room
 Cassius: It's a beautiful room, isn't it? I'm sure you'll be spending a lot of time there.

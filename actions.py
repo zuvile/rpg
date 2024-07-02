@@ -11,3 +11,4 @@ class Actions(Enum):
     CREATE_NEW_SAVE_FILE = 7
     LOAD_SAVE_FILE = 8
     SAVE_GAME = 9
+    STORY = 10

@@ -37,6 +37,7 @@ title: castle_intro
     Narrator: the man leads you down a long corridor. Your footsteps echo in the halls of this old castle.
         -> Let me go!
             Cassius[???]: Keep quiet.
+        end_choices
         -> [Say nothing]
         end_choices
     Narrator: you are brought into a room where an old man is sitting behind a desk.
@@ -52,9 +53,10 @@ title: castle_intro
         -> Please. I just want to go home.
         $rel_mod(Cassius) = 10
             Narrator: Cassius looks at you with a hint of sympathy. If even he is sorry for you... What is going to happen?
+            end_choices
         -> Are you kidding me? What are you two on about? Let me go this instant. I'm calling the police.
             Narrator: As you reach inside your pocket, you realise there is no pocket. In fact, you are wearing clothes that you do not recognise.
-        end_choices
+            end_choices
     Master[Old man]: You will become a student here, woman. That is the only thing we can do.
     Cassius: Other than to kill you.
     Player: What...

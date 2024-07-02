@@ -1,0 +1,77 @@
+title: game_intro
+    Player: [I stand in an old cemetery. It's raining. The air is filled with the smell of dirt and rotting leaves.]
+    $render=cemetery.png
+    Player: [Barely anyone has shown up. No one is speaking as the casket is being lowered into the ground.]
+    Player: [I hate funerals. Especially when I hardly knew the person.]
+    Player: ...
+    Player: [I wonder if I can skip the dinner and go home.]
+    Mother: Haven't seen my sister in years. And now...
+    Player: [I hardly know what to say]
+        -> It will be alright.
+            Mother: Thanks, dear.
+            $jmp=got_card
+            end_choices
+        -> [Say nothing]
+            Mother: *sniff*
+            Mother: I'm sorry. I'm just so sad.
+            $jmp=got_card
+            end_choices
+title: got_card
+    Mother: I almost forgot. She left you something.
+    Player: huh?
+    Mother: [My mother pulls out a single picture and hands it to me.]
+    $render = final_card.png
+    Player: What is this?
+    Player: [It's not a picture. It's a card. The text is worn off as though the card has been touched a thousand times.]
+    Player: [As I rub the surface of the card it begins to glow...]
+    Player: What the...?!
+    $jmp=castle_intro
+title: castle_intro
+    $render = castle.png
+    Player: where am I?
+    Player: [I find myself in an old castle.]
+    Player: [Before I have the chance to gather my wits, a man approaches.]
+    Cassius: [He is dressed all in black. His piercing blue eyes widen at the sight of me.]
+    Cassius: Who are you?
+    Player: What... IS this place?
+    Cassius: [As the man opens his mouth to speak, his eyes drift to your hand and sees the card you are still holding.]
+    Cassius: It can't be...
+    Cassius: [The man pulls out a card from his sleeve. Before  I get the chance to say anything, I feel my hands being tied behind your back, as though my invisible force.]
+    Cassius: Come with me.
+    $render=black.png
+    Cassius: [The man leads you down a long corridor. Your footsteps echo in the halls of this old castle.]
+        -> Let me go!
+            Cassius: Keep quiet.
+        end_choices
+        -> [Say nothing]
+            Player: [I am too scared to speak.]
+        end_choices
+    Player: [I AM brought into a room where an old man is sitting behind a desk.]
+    Cassius: master. This... woman... Appeared just now, and look what she was holding.
+    Master: Show me, Cassius.
+    Player: [I note the name of the cold man.]
+    Cassius: [Cassius rips the card from your hand and shows it to the old man. His eyes widen.]
+    Master: Did you bind the card to yourself, woman?
+    Player: I don't know what you're talking about... I touched it and... Appeared here.
+    Player: [The men share a look. It's obvious that your words mean something to them that you can't yet comprehend.]
+    Master: Then there's only one thing to do.
+    Player: [I shudder. My hands are still bound and I can barely move.]
+        -> Please. I just want to go home.
+            $rel_mod(Cassius)=10
+            Cassius: [Cassius looks at you with a hint of sympathy. If even he is sorry for you... What is going to happen?]
+            end_choices
+        -> Are you kidding me? What are you two on about? Let me go this instant. I'm calling the police.
+            Player: [As you reach inside your pocket, you realise there is no pocket. In fact, you are wearing clothes that you do not recognise.]
+            end_choices
+    Master: You will become a student here, woman. That is the only thing we can do.
+    Cassius: Other than to kill you.
+    Player: What...
+    $render=black.png
+    Player: [You feel yourself slip into a slumber like state. As you close your eyes, your thoughts drift away to your aunt that you barely knew.]
+    Player: [What is the card that she had left you?]
+    Player: [And what will happen when you wake up...?]
+
+
+
+
+

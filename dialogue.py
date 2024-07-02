@@ -2,7 +2,7 @@ import re
 
 # this class builds the dialogue tree.
 # The dialogue tree is a tree structure that represents the dialogue in the game.
-# if children == 1 it means the speaker will continue to talk
+# if children == 1, it means the conversation is linear
 # if children == 0 it means the conversation is over
 # if children > 1, it means there's a choice for the player to make
 
@@ -17,6 +17,7 @@ class DialogueTree:
         self.rel_mods = {}
         self.jmp = None
         self.render = None
+        self.init_fight = False
 
 
 class Dialogue:
@@ -43,12 +44,18 @@ class Dialogue:
             return self.handle_speaker_dialogue(idx, lines, prev, root, line, choice_root)
         if re.match("(\\$rel_mod.*)", line):
             return self.handle_rel_mod(idx, lines, prev, root, line, choice_root)
+        if re.match("(\\$init_fight.*)", line):
+            return self.handle_init_fight(idx, lines, prev, root, line, choice_root)
         if re.match("(\\$jmp=.*)", line):
             return self.handle_jmp(idx, lines, prev, root, line, choice_root)
         if re.match("(->.*)", line.strip()):
             return self.handle_choice(idx, lines, prev, root, line, choice_root)
         if re.match("(\\$render=.*)", line):
             return self.handle_render(idx, lines, prev, root, line, choice_root)
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
+
+    def handle_init_fight(self, idx, lines, prev, root, line, choice_root):
+        prev.init_fight = True
         return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
     def read_dialogue_chunks(self, lines, idx, dict, curr_title):
@@ -72,22 +79,23 @@ class Dialogue:
 
     def handle_speaker_dialogue(self, idx, lines, prev, root, line, choice_root):
         speaker, dialogue = line.split(': ')
-
         new_node = DialogueTree(dialogue, speaker)
-
+        # the node had choices. Each choice now needs to point to the same next node
         if prev is not None and len(prev.children) > 1:
             choice_root = None
-            for child in prev.children:
-                while len(child.children) > 0:
-                    child = child.children[0]
-                child.children.append(new_node)
-
+            self.update_children(prev, new_node)
         elif prev is not None:
             prev.children.append(new_node)
             new_node.parent = prev
         if root is None:
             root = new_node
         return self.create_tree(idx + 1, lines, new_node, root, choice_root)
+
+    def update_children(self, prev, new_node):
+        for child in prev.children:
+            while len(child.children) > 0:
+                child = child.children[0]
+            child.children.append(new_node)
 
     def handle_rel_mod(self, idx, lines, prev, root, line, choice_root):
         match = re.search("\\((.*?)\\)=(-?\\d+)", line)

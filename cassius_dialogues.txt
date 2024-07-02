@@ -1,38 +1,8 @@
 title: cassius_introduction
-Cassius: You are awake. Good.
-$render=black.png
-Cassius: My name is Cassius. I was told to...
-Player: [He hesitates before continuing. I can see that he's hot happy with what he's about to say.]
-Cassius: I was told to watch over you, while you study.
-Player: Study?
-Cassius: Yes. The card that you've found is very important to our order.
-Cassius: You are it's owner now. So you will study until you can use it.
-    -> No way. I am leaving.
-        $rel_mod(Cassius)=-10
-        Cassius: No you're not. Listen. Either you learn to use this card, or you die and someone else becomes its owner.
-        end_choices
-    -> Study... Study what?
-        $rel_mod(Cassius)=10
-        Cassius: Our ways. There are many more cards like this. Each has an effect. I'll show you everything.
-        end_choices
-Player: [It seems like I really don't have a say in the matter.]
-Player: [Fear and curiosity mix within me.]
-Player: What are these cards?
-Cassius: Each card has a special ability. They can heal, do damage... Charm and fool people, turn walls into doors, night into day...
-Player: [As he talks a spark glitters in his eyes.]
-Cassius: Since the card bound itself to you, it means you do have some innate ability... Which is unusual.
-Player: unusual how?
-Cassius: Because you're a woman.
-Player: what does that have to do with anything?
-Cassius: I'll explain later. Right now, take this card.
-Cassius: [He gives me something.]
-Cassius: This is a basic attack card. Go ahead, use it on me.
-Player: What? Won't you get hurt?
-Cassius: [he laughs]
-Cassius: Don't worry about that. I am one of the best.
+Cassius: Let's fight.
+$init_fight
+Cassius: It's over.
 
-title: cassius_ceremony_room
-Cassius: It's a beautiful room, isn't it? I'm sure you'll be spending a lot of time there.
 
 
 

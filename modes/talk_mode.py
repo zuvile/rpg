@@ -42,6 +42,8 @@ class TalkMode(GameMode, Cursor):
             self.del_keys.append(self.tree.jmp)
             self.tree = self.trees[self.tree.jmp]
             return self.mode
+        if self.tree.init_fight:
+            return Actions.FIGHT
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
             return Actions.EXPLORE
@@ -91,6 +93,8 @@ class TalkMode(GameMode, Cursor):
             self.done_reading = False
         if self.current_interactable is not None:
             draw_text(self.current_interactable.name.upper(), 2 * 32, 12 * 32, 15, SKYBLUE)
+        else:
+            draw_text("ME", 2 * 32, 12 * 32, 15, SKYBLUE)
         draw_text(pages[self.curr_page], 2 * 32, 13 * 32, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
             self.curr_page += 1

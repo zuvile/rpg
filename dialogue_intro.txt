@@ -13,6 +13,7 @@ title: game_intro
             end_choices
         -> [Say nothing]
             Mother: *sniff*
+            Mother: I'm sorry. I'm just so sad.
             $jmp=got_card
             end_choices
 title: got_card

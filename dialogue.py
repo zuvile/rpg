@@ -20,10 +20,7 @@ class DialogueTree:
 
 
 class Dialogue:
-    def __init__(self):
-        self.trees = self.load_dialogue_trees()
-
-    def load_dialogue_trees(self, file_name='dialogue_intro.txt'):
+    def load_dialogue_trees(self, file_name):
         file = open(file_name, 'r')
         lines = file.readlines()
         dict = {}
@@ -34,32 +31,25 @@ class Dialogue:
             trees[key] = tree
         return trees
 
-    def get_dialogue_for_character(self, character_name):
-        dialogues = {}
-        for key, tree in self.trees.items():
-            if key.startswith(character_name.lower()):
-                dialogues[key] = tree
-        return dialogues
-
-    def create_tree(self, idx, lines, prev, root=None):
+    def create_tree(self, idx, lines, prev, root=None, choice_root=None):
         if idx >= len(lines):
             return root if root is not None else prev
         line = lines[idx].strip('\n').strip()
         if re.match('title: .*', line):
-            return self.handle_title(idx, lines, prev, root)
+            return self.handle_title(idx, lines, prev, root, choice_root)
         if line == 'end_choices':
-            return self.handle_end_choices(idx, lines, prev, root)
+            return self.handle_end_choices(idx, lines, root, choice_root)
         if re.match("(.*): (.*)", line):
-            return self.handle_speaker_dialogue(idx, lines, prev, root, line)
+            return self.handle_speaker_dialogue(idx, lines, prev, root, line, choice_root)
         if re.match("(\\$rel_mod.*)", line):
-            return self.handle_rel_mod(idx, lines, prev, root, line)
+            return self.handle_rel_mod(idx, lines, prev, root, line, choice_root)
         if re.match("(\\$jmp=.*)", line):
-            return self.handle_jmp(idx, lines, prev, root, line)
+            return self.handle_jmp(idx, lines, prev, root, line, choice_root)
         if re.match("(->.*)", line.strip()):
-            return self.handle_choice(idx, lines, prev, root, line)
+            return self.handle_choice(idx, lines, prev, root, line, choice_root)
         if re.match("(\\$render=.*)", line):
-            return self.handle_render(idx, lines, prev, root, line)
-        return self.create_tree(idx + 1, lines, prev, root)
+            return self.handle_render(idx, lines, prev, root, line, choice_root)
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
     def read_dialogue_chunks(self, lines, idx, dict, curr_title):
         if idx >= len(lines):
@@ -74,18 +64,19 @@ class Dialogue:
             dict[curr_title].append(line)
             self.read_dialogue_chunks(lines, idx + 1, dict, curr_title)
 
-    def handle_title(self, idx, lines, prev, root):
-        return self.create_tree(idx + 1, lines, prev, root)
+    def handle_title(self, idx, lines, prev, root, choice_root):
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
-    def handle_end_choices(self, idx, lines, prev, root):
-        return self.create_tree(idx + 1, lines, prev.parent.parent, root)
+    def handle_end_choices(self, idx, lines, root, choice_root):
+        return self.create_tree(idx + 1, lines, choice_root, root, choice_root)
 
-    def handle_speaker_dialogue(self, idx, lines, prev, root, line):
+    def handle_speaker_dialogue(self, idx, lines, prev, root, line, choice_root):
         speaker, dialogue = line.split(': ')
 
         new_node = DialogueTree(dialogue, speaker)
 
         if prev is not None and len(prev.children) > 1:
+            choice_root = None
             for child in prev.children:
                 while len(child.children) > 0:
                     child = child.children[0]
@@ -96,33 +87,35 @@ class Dialogue:
             new_node.parent = prev
         if root is None:
             root = new_node
-        return self.create_tree(idx + 1, lines, new_node, root)
+        return self.create_tree(idx + 1, lines, new_node, root, choice_root)
 
-    def handle_rel_mod(self, idx, lines, prev, root, line):
+    def handle_rel_mod(self, idx, lines, prev, root, line, choice_root):
         match = re.search("\\((.*?)\\)=(-?\\d+)", line)
         char_name = match.group(1)
         modifier = match.group(2)
         prev.rel_mods[char_name] = int(modifier)
-        return self.create_tree(idx + 1, lines, prev, root)
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
-    def handle_jmp(self, idx, lines, prev, root, line):
+    def handle_jmp(self, idx, lines, prev, root, line, choice_root):
         _, jmp = line.split('=')
         prev.jmp = jmp
-        return self.create_tree(idx + 1, lines, prev, root)
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
-    def handle_choice(self, idx, lines, prev, root, line):
+    def handle_choice(self, idx, lines, prev, root, line, choice_root):
+        if choice_root is None:
+            choice_root = prev
         new_node = DialogueTree(line, "Player")
-        prev.children.append(new_node)
-        new_node.parent = prev
-        return self.create_tree(idx + 1, lines, new_node, root)
+        choice_root.children.append(new_node)
+        new_node.parent = choice_root
+        return self.create_tree(idx + 1, lines, new_node, root, choice_root)
 
-    def handle_render(self, idx, lines, prev, root, line):
+    def handle_render(self, idx, lines, prev, root, line, choice_root):
         prev.render = line.split('=')[1]
-        return self.create_tree(idx + 1, lines, prev, root)
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
 def main():
     dialogue = Dialogue()
-    trees = dialogue.load_dialogue_trees('dialogue_intro.txt')
+    trees = dialogue.load_dialogue_trees('dialogue_test.txt')
     print(trees)
 
 if __name__ == '__main__':

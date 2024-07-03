@@ -11,4 +11,4 @@ class DialogueMode(TalkMode, Cursor):
         trees = friend.get_dialogue_trees()
 
         super().set_dialogue_trees(trees)
-        return super().draw(game_state)
+        super().draw(game_state)

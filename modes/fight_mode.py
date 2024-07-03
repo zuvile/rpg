@@ -1,6 +1,5 @@
 from modes.game_mode import GameMode
 from pyray import *
-from actions import *
 from cursor import Cursor
 from spell import get_spells
 
@@ -14,6 +13,7 @@ class FightMode(GameMode, Cursor):
         self.show_spell_menu = False
         self.is_enemy_turn = False
         self.start_of_fight = True
+        self.last_fight_won = False
 
     def draw(self, game_state):
         draw_texture(self.texture, 0, 0, WHITE)
@@ -22,11 +22,14 @@ class FightMode(GameMode, Cursor):
         enemy = game_state.get_interactable()
         enemy.draw()
 
+        if not game_state.render_stack.is_layer_top(self):
+            return
+
         if self.end_of_fight:
             draw_text(self.final_message, 2 * 32, 10 * 32, 32, GREEN)
             if is_key_pressed(KEY_ENTER):
                 self.end_of_fight = False
-                return Actions.EXPLORE
+                game_state.render_stack.pop()
         if self.show_spell_menu:
             spells = get_spells(player.magic)
             options = [spell.name for spell in spells]
@@ -53,13 +56,12 @@ class FightMode(GameMode, Cursor):
 
         if not enemy.is_alive():
             self.final_message = "You won the fight!"
+            self.last_fight_won = True
             self.end_of_fight = True
         elif self.is_enemy_turn and is_key_pressed(KEY_ENTER):
             self.enemy_turn(player, enemy)
-        return Actions.FIGHT
 
     def player_spell(self, spell, player, enemy):
-        print(spell.name)
         if player.mana >= spell.mana_cost:
             player.mana -= spell.mana_cost
             player.hp += spell.heal
@@ -77,6 +79,7 @@ class FightMode(GameMode, Cursor):
         draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
         player.apply_damage(dmg)
         if not player.is_alive():
+            self.last_fight_won = False
             self.final_message = "You lost the fight!"
             self.end_of_fight = True
 
@@ -100,7 +103,6 @@ class FightMode(GameMode, Cursor):
         draw_text("Player HP: " + str(player.hp), 2 * 32, 11 * 32, 16, RED)
         draw_text("Enemy HP: " + str(enemy.hp), 2 * 32, 12 * 32, 16, RED)
         draw_text("Player mana: " + str(player.mana), 2 * 32, 13 * 32, 16, RED)
-        print(self.message)
         draw_text(self.message, 2 * 32, 14 * 32, 14, RED)
 
     def jump_back(self, player, enemy):
@@ -109,5 +111,10 @@ class FightMode(GameMode, Cursor):
         enemy.rec.x = enemy.rec.x + 32
         enemy.rec.y = enemy.rec.y + 32
 
-
-
+    def prepare_new_fight(self):
+        self.end_of_fight = False
+        self.message = "You are in a fight!"
+        self.final_message = ""
+        self.show_spell_menu = False
+        self.is_enemy_turn = False
+        self.start_of_fight = True

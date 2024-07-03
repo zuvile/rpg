@@ -1,8 +1,8 @@
 from modes.game_mode import GameMode
 from pyray import *
 import textures
-from actions import *
 from cursor import Cursor
+
 
 class TalkMode(GameMode, Cursor):
     def __init__(self, mode):
@@ -20,36 +20,38 @@ class TalkMode(GameMode, Cursor):
             self.trees = trees
 
     def draw(self, game_state):
+        if not game_state.render_stack.is_layer_top(self):
+            return
         if len(self.trees) == 0:
-            return self.write_nothing_say()
-
+            return self.write_nothing_say(game_state)
         if self.tree is None:
             first_key = next(iter(self.trees))
             self.del_keys.append(first_key)
             self.tree = self.trees[first_key]
-
         self.draw_scene()
         idx = self.write_text(game_state)
         if self.current_interactable is not None:
             self.draw_portrait()
         if self.done_reading:
-            return self.advance_to_next_node(idx)
+            return self.advance_to_next_node(idx, game_state)
 
-        return self.mode
-
-    def advance_to_next_node(self, idx):
+    def advance_to_next_node(self, idx, game_state):
         if self.tree.jmp is not None:
             self.del_keys.append(self.tree.jmp)
             self.tree = self.trees[self.tree.jmp]
-            return self.mode
+            return
         if self.tree.init_fight:
-            return Actions.FIGHT
+            self.done_reading = False
+            self.tree = self.tree.children[0]
+            game_state.fight_mode.prepare_new_fight()
+            game_state.render_stack.push(game_state.fight_mode)
+            return
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
-            return Actions.EXPLORE
+            game_state.render_stack.pop()
+            return
 
         self.tree = self.tree.children[idx]
-        return self.mode
 
     def remove_read_dialogue(self):
         for key in self.del_keys:
@@ -122,13 +124,11 @@ class TalkMode(GameMode, Cursor):
         portrait_texture = textures.id_to_raylib(self.current_interactable.portrait)
         draw_texture_pro(portrait_texture, sub_texture, destination, origin, 0, WHITE)
 
-    def write_nothing_say(self):
+    def write_nothing_say(self, game_state):
         draw_rectangle(0, 352, 800, 128, BLACK)
         draw_text("There's nothing to talk about now", 2 * 32, 13 * 32, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
-            return Actions.EXPLORE
-        else:
-            return self.mode
+            game_state.render_stack.pop()
 
     def draw_scene(self):
         if self.tree.render is not None:

@@ -1,6 +1,5 @@
 from modes.game_mode import GameMode
 from pyray import *
-from entities.player import Player
 from actions import *
 
 
@@ -23,7 +22,6 @@ class ExploreMode(GameMode):
             enemy.draw()
         for friend in map.friends:
             friend.draw()
+        if game_state.render_stack.is_layer_top(self):
+            player.move(game_state)
 
-        action = player.move(game_state)
-
-        return action

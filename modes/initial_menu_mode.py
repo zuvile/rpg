@@ -1,5 +1,7 @@
 from modes.menu_mode import MenuMode
 from actions import Actions
+from save import Save
+from modes.story_mode import StoryMode
 
 class InitialMenuMode(MenuMode):
     def __init__(self):

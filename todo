@@ -1,0 +1,5 @@
+BUGS:
+When the first line in dialogue is too short, the text gets skipped
+
+FEATURES:
+prevent player from moving while dialogue or fight is active

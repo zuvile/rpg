@@ -2,8 +2,6 @@ from entities.character import Character
 from entities.rectangle import Rectangle
 from collision import should_init_fight, should_init_dialogue
 import pyray as rl
-from actions import *
-
 
 class Player(Character):
     def __init__(self, x=0, y=0):
@@ -30,18 +28,18 @@ class Player(Character):
             return self.move_player(-2, 0, game_state)
         if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, game_state)
-        return Actions.EXPLORE
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
             self.rec.x += dx
             self.rec.y += dy
         if should_init_fight(self, game_state):
-            return Actions.FIGHT
+            #todo not the right place for this
+            game_state.fight_mode.prepare_new_fight()
+            game_state.render_stack.push(game_state.fight_mode)
+
         if should_init_dialogue(self, game_state):
-            return Actions.DIALOGUE
-        else:
-            return Actions.EXPLORE
+            game_state.render_stack.push(game_state.dialogue_mode)
 
     def increase_magic_skill(self, modifier):
         self.magic += modifier

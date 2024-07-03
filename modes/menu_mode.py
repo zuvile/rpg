@@ -13,7 +13,7 @@ class MenuMode(GameMode, Cursor):
     def draw(self, game_state):
         self.draw_ui(self.options)
 
-        self.move_cursor(len(self.options))
+        self.move_cursor_vertical(len(self.options))
         if is_key_pressed(KEY_ENTER):
             return self.option_handlers[self.cursor_index]()
 

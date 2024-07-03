@@ -1,19 +1,17 @@
 from modes.game_mode import GameMode
 from pyray import *
 from cursor import Cursor
-from spell import get_spells
 
 class FightMode(GameMode, Cursor):
     def __init__(self):
         super().__init__()
         self.end_of_fight = False
-        self.message = "You are in a fight!"
-        self.final_message = ""
         self.texture = load_texture('assets/fight.png')
         self.show_spell_menu = False
         self.is_enemy_turn = False
         self.start_of_fight = True
         self.last_fight_won = None
+        self.message_stack = []
 
     def draw(self, game_state):
         draw_texture(self.texture, 0, 0, WHITE)
@@ -21,100 +19,74 @@ class FightMode(GameMode, Cursor):
         player.draw()
         enemy = game_state.get_interactable()
         enemy.draw()
+        self.draw_fight_messages()
 
         if not game_state.is_layer_top(self):
             return
 
         if self.end_of_fight:
-            draw_text(self.final_message, 2 * 32, 10 * 32, 32, GREEN)
             if is_key_pressed(KEY_ENTER):
                 self.end_of_fight = False
                 game_state.pop_render_layer()
-        if self.show_spell_menu:
-            spells = get_spells(player.magic)
-            options = [spell.name for spell in spells]
-            options.append("BACK")
-            if is_key_pressed(KEY_ENTER):
-                if options[self.cursor_index] == "BACK":
-                    self.show_spell_menu = False
-                else:
-                    self.player_spell(spells[self.cursor_index], player, enemy)
-        else:
-            options = ["ATTACK", "SPELL"]
-            if is_key_pressed(KEY_ENTER) and options[self.cursor_index] == "ATTACK":
-                self.player_attack(player, enemy)
-            if is_key_pressed(KEY_ENTER) and options[self.cursor_index] == "SPELL":
-                self.show_spell_menu = True
+                return
 
-        self.draw_ui(player, enemy, options)
-        if self.start_of_fight:
-            self.jump_back(player, enemy)
-            self.start_of_fight = False
-            enemy.draw()
-            player.draw()
-        self.move_cursor(len(options))
+        self.draw_ui(player, enemy)
+        self.draw_card_deck(player)
+
+        self.move_cursor_horizontal(len(player.deck.cards))
+        self.play_card(player, enemy)
 
         if not enemy.is_alive():
-            self.final_message = "You won the fight!"
+            self.message_stack.append("You won the fight!")
             game_state.last_fight_won = True
             self.end_of_fight = True
-        elif self.is_enemy_turn and is_key_pressed(KEY_ENTER):
+        elif self.is_enemy_turn:
             self.enemy_turn(player, enemy, game_state)
+            self.is_enemy_turn = False
 
-    def player_spell(self, spell, player, enemy):
-        if player.mana >= spell.mana_cost:
-            player.mana -= spell.mana_cost
-            player.hp += spell.heal
-            player.mana += spell.mana_gain
-            dmg = spell.damage
-            self.message = "You cast " + spell.name
-            enemy.apply_damage(dmg)
+    def play_card(self, player, enemy):
+        card = player.deck.cards[self.cursor_index]
+        if is_key_pressed(KEY_ENTER):
+            card.use(player, enemy)
+            self.message_stack.append("You used " + card.name + "!")
             self.is_enemy_turn = True
-        else:
-            self.message = "Not enough mana"
 
     def enemy_turn(self, player, enemy, game_state):
         dmg = enemy.do_attack()
-        self.message = "Enemy attacked for " + str(dmg) + " damage"
-        draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
         player.apply_damage(dmg)
+        self.message_stack.append("The enemy did " + str(dmg) + " damage to you!")
         if not player.is_alive():
             game_state.last_fight_won = False
-            self.final_message = "You lost the fight!"
+            self.message_stack.append("You lost the fight!")
             self.end_of_fight = True
 
-    def player_attack(self, player, enemy):
-        dmg = player.do_attack()
-        self.message = "You attacked for " + str(dmg) + " damage"
-        draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
-        enemy.apply_damage(dmg)
-        self.is_enemy_turn = True
+    def draw_ui(self, player, enemy):
+        draw_rectangle(19*32, 0, 10*32, 10*32, WHITE)
+        draw_text("HP: " + str(player.hp), 20*32, 1*32, 16, BLACK)
+        draw_text("Mana: " + str(player.mana), 20*32, 3*32, 16, BLACK)
+        draw_text("Enemy HP: " + str(enemy.hp), 20*32, 2*32, 16, BLACK)
 
-    def draw_ui(self, player, enemy, options):
-        x = 640
-        y = 65
+    def draw_fight_messages(self):
+        y = 4*32
+        for message in self.message_stack:
+            draw_text(message, 10*32, y, 16, BLACK)
+            y += 32
 
-        for index, option in enumerate(options):
+    def draw_card_deck(self, player):
+        x = 32
+        y = 300
+
+        for index, card in enumerate(player.deck.cards):
             colour = RED
             if self.cursor_index == index:
                 colour = GREEN
-            draw_text(option, x, y, 20, colour)
-            y += 32
-        draw_text("Player HP: " + str(player.hp), 2 * 32, 11 * 32, 16, RED)
-        draw_text("Enemy HP: " + str(enemy.hp), 2 * 32, 12 * 32, 16, RED)
-        draw_text("Player mana: " + str(player.mana), 2 * 32, 13 * 32, 16, RED)
-        draw_text(self.message, 2 * 32, 14 * 32, 14, RED)
-
-    def jump_back(self, player, enemy):
-        player.rec.x = player.rec.x - 32
-        player.rec.y = player.rec.y - 32
-        enemy.rec.x = enemy.rec.x + 32
-        enemy.rec.y = enemy.rec.y + 32
+            draw_rectangle(x + 32, y, 64, 64, colour)
+            draw_text(card.name, x + 32, y, 20, BLACK)
+            x += 62
 
     def prepare_new_fight(self):
         self.end_of_fight = False
-        self.message = "You are in a fight!"
-        self.final_message = ""
+        self.message_stack = []
         self.show_spell_menu = False
         self.is_enemy_turn = False
         self.start_of_fight = True

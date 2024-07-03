@@ -90,7 +90,7 @@ class TalkMode(GameMode, Cursor):
         pages = [self.tree.text[i:i + 64] for i in range(0, len(self.tree.text), 64)]
         if self.curr_page == len(pages) and len(self.tree.children) > 1 and not self.tree.auto_choice:
             self.write_choices()
-            self.move_cursor(len(self.tree.children))
+            self.move_cursor_vertical(len(self.tree.children))
             return self.make_choice(game_state)
 
         elif self.curr_page >= len(pages):

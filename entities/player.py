@@ -1,5 +1,6 @@
 from entities.character import Character
 from entities.rectangle import Rectangle
+from entities.deck import Deck
 from collision import should_init_fight, should_init_dialogue
 import pyray as rl
 
@@ -10,14 +11,15 @@ class Player(Character):
         scale = 2
         self.attack = 10
         self.ac = 5
-        self.hp = 30
+        self.hp = 100
         self.magic = 1
         self.mana = 10
         self.x = x
         self.y = y
         self.dead = False
+        self.deck = Deck()
 
-        super().__init__(texture, sub_texture, scale, x, y)
+        super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
 
     def move(self, game_state):
         if rl.is_key_down(rl.KEY_W):

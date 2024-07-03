@@ -18,6 +18,7 @@ class DialogueTree:
         self.jmp = None
         self.render = None
         self.init_fight = False
+        self.auto_choice = False
 
 
 class Dialogue:
@@ -56,6 +57,7 @@ class Dialogue:
 
     def handle_init_fight(self, idx, lines, prev, root, line, choice_root):
         prev.init_fight = True
+        prev.auto_choice = True
         return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
     def read_dialogue_chunks(self, lines, idx, dict, curr_title):

@@ -20,6 +20,7 @@ class GameState:
         self.fight_mode = FightMode()
         self.story_mode = StoryMode()
         self.explore_mode = ExploreMode()
+        self.last_fight_won = None
 
     def set_interactable(self, character: Character):
         self.interacting_with = character

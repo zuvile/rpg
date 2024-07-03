@@ -24,6 +24,13 @@ class TalkMode(GameMode, Cursor):
             return
         if len(self.trees) == 0:
             return self.write_nothing_say(game_state)
+        if game_state.last_fight_won is not None and game_state.last_fight_won:
+            self.tree = self.tree.children[0].children[0]
+            game_state.last_fight_won = None
+        elif game_state.last_fight_won is not None and not game_state.last_fight_won:
+            self.tree = self.tree.children[1].children[0]
+            game_state.last_fight_won = None
+
         if self.tree is None:
             first_key = next(iter(self.trees))
             self.del_keys.append(first_key)
@@ -42,10 +49,9 @@ class TalkMode(GameMode, Cursor):
             return
         if self.tree.init_fight:
             self.done_reading = False
-            self.tree = self.tree.children[0]
-            game_state.fight_mode.prepare_new_fight()
             game_state.push_fight_mode()
             return
+
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
             game_state.pop_render_layer()
@@ -70,7 +76,7 @@ class TalkMode(GameMode, Cursor):
     def make_choice(self, game_state):
         if is_key_pressed(KEY_ENTER):
             rel_mods = self.tree.children[self.cursor_index].rel_mods
-            #there's a better way to do this
+            # there's a better way to do this
             for key, value in rel_mods.items():
                 for friend in game_state.map.friends:
                     if friend.name == key:
@@ -81,8 +87,8 @@ class TalkMode(GameMode, Cursor):
     # Write text and choices. Return 0 if no choice was made, otherwise return choice index
     def write_text(self, game_state):
         self.set_interactable(game_state, self.tree)
-        pages = [self.tree.text[i:i+64] for i in range(0, len(self.tree.text), 64)]
-        if self.curr_page == len(pages) and len(self.tree.children) > 1:
+        pages = [self.tree.text[i:i + 64] for i in range(0, len(self.tree.text), 64)]
+        if self.curr_page == len(pages) and len(self.tree.children) > 1 and not self.tree.auto_choice:
             self.write_choices()
             self.move_cursor(len(self.tree.children))
             return self.make_choice(game_state)
@@ -136,7 +142,3 @@ class TalkMode(GameMode, Cursor):
             draw_texture(texture, 0, 0, WHITE)
 
         draw_rectangle(0, 352, 800, 128, BLACK)
-
-
-
-

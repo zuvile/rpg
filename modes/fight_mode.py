@@ -13,7 +13,7 @@ class FightMode(GameMode, Cursor):
         self.show_spell_menu = False
         self.is_enemy_turn = False
         self.start_of_fight = True
-        self.last_fight_won = False
+        self.last_fight_won = None
 
     def draw(self, game_state):
         draw_texture(self.texture, 0, 0, WHITE)
@@ -56,10 +56,10 @@ class FightMode(GameMode, Cursor):
 
         if not enemy.is_alive():
             self.final_message = "You won the fight!"
-            self.last_fight_won = True
+            game_state.last_fight_won = True
             self.end_of_fight = True
         elif self.is_enemy_turn and is_key_pressed(KEY_ENTER):
-            self.enemy_turn(player, enemy)
+            self.enemy_turn(player, enemy, game_state)
 
     def player_spell(self, spell, player, enemy):
         if player.mana >= spell.mana_cost:
@@ -73,13 +73,13 @@ class FightMode(GameMode, Cursor):
         else:
             self.message = "Not enough mana"
 
-    def enemy_turn(self, player, enemy):
+    def enemy_turn(self, player, enemy, game_state):
         dmg = enemy.do_attack()
         self.message = "Enemy attacked for " + str(dmg) + " damage"
         draw_text(self.message, 2 * 32, 14 * 32, 32, RED)
         player.apply_damage(dmg)
         if not player.is_alive():
-            self.last_fight_won = False
+            game_state.last_fight_won = False
             self.final_message = "You lost the fight!"
             self.end_of_fight = True
 

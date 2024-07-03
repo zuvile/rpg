@@ -34,10 +34,7 @@ class Player(Character):
             self.rec.x += dx
             self.rec.y += dy
         if should_init_fight(self, game_state):
-            #todo not the right place for this
-            game_state.fight_mode.prepare_new_fight()
-            game_state.render_stack.push(game_state.fight_mode)
-
+            game_state.push_fight_mode()
         if should_init_dialogue(self, game_state):
             game_state.push_new_dialogue_mode()
 

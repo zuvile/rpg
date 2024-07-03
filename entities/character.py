@@ -5,12 +5,14 @@ import textures as t
 
 
 class Character(Entity):
-    def __init__(self, texture, sub_texture, scale, x=0, y=0, size=32):
+    def __init__(self, texture, sub_texture, scale, x=0, y=0, size=32, attack=10, ac=5, hp=30, magic=1, mana=10):
         super().__init__(x, y, size)
-        self.attack = 10
-        self.ac = 5
-        self.hp = 20
+        self.attack = attack
+        self.ac = ac
+        self.hp = hp
         self.dead = False
+        self.magic = magic
+        self.mana = mana
         self.texture = texture
         self.scale = scale
         self.sub_texture = sub_texture

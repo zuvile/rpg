@@ -20,7 +20,7 @@ class TalkMode(GameMode, Cursor):
             self.trees = trees
 
     def draw(self, game_state):
-        if not game_state.render_stack.is_layer_top(self):
+        if not game_state.is_layer_top(self):
             return
         if len(self.trees) == 0:
             return self.write_nothing_say(game_state)
@@ -44,11 +44,11 @@ class TalkMode(GameMode, Cursor):
             self.done_reading = False
             self.tree = self.tree.children[0]
             game_state.fight_mode.prepare_new_fight()
-            game_state.render_stack.push(game_state.fight_mode)
+            game_state.push_fight_mode()
             return
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
-            game_state.render_stack.pop()
+            game_state.pop_render_layer()
             return
 
         self.tree = self.tree.children[idx]
@@ -128,7 +128,7 @@ class TalkMode(GameMode, Cursor):
         draw_rectangle(0, 352, 800, 128, BLACK)
         draw_text("There's nothing to talk about now", 2 * 32, 13 * 32, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
-            game_state.render_stack.pop()
+            game_state.pop_render_layer()
 
     def draw_scene(self):
         if self.tree.render is not None:

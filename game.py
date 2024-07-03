@@ -17,7 +17,7 @@ while not window_should_close():
     begin_drawing()
 
     if game_state is not None:
-        game_state.render_stack.render()
+        game_state.render()
 
     if action == Actions.INITIAL_MENU:
         action = initial_menu_mode.draw(None)
@@ -26,8 +26,8 @@ while not window_should_close():
         break
     if action == Actions.CREATE_NEW_SAVE_FILE:
         game_state = save.create_new()
-        game_state.render_stack.push(game_state.explore_mode)
-        game_state.render_stack.push(game_state.story_mode)
+        game_state.push_new_explore_mode()
+        game_state.push_new_story_mode()
         action = None
     if action == Actions.LOAD_SAVE_FILE:
         game_state = save.load()

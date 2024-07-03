@@ -7,11 +7,11 @@ class StoryMode(TalkMode):
         super().__init__(Actions.STORY)
 
     def draw(self, game_state):
-        if not game_state.render_stack.is_layer_top(self):
+        if not game_state.is_layer_top(self):
             return
         trees = self.get_trees_by_day(game_state.day)
         if trees is None:
-            game_state.render_stack.pop()
+            game_state.pop_render_layer()
             return
 
         super().set_dialogue_trees(trees)

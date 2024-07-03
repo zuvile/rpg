@@ -22,6 +22,6 @@ class ExploreMode(GameMode):
             enemy.draw()
         for friend in map.friends:
             friend.draw()
-        if game_state.render_stack.is_layer_top(self):
+        if game_state.is_layer_top(self):
             player.move(game_state)
 

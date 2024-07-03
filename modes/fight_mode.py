@@ -22,14 +22,14 @@ class FightMode(GameMode, Cursor):
         enemy = game_state.get_interactable()
         enemy.draw()
 
-        if not game_state.render_stack.is_layer_top(self):
+        if not game_state.is_layer_top(self):
             return
 
         if self.end_of_fight:
             draw_text(self.final_message, 2 * 32, 10 * 32, 32, GREEN)
             if is_key_pressed(KEY_ENTER):
                 self.end_of_fight = False
-                game_state.render_stack.pop()
+                game_state.pop_render_layer()
         if self.show_spell_menu:
             spells = get_spells(player.magic)
             options = [spell.name for spell in spells]

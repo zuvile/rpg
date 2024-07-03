@@ -39,7 +39,7 @@ class Player(Character):
             game_state.render_stack.push(game_state.fight_mode)
 
         if should_init_dialogue(self, game_state):
-            game_state.render_stack.push(game_state.dialogue_mode)
+            game_state.push_new_dialogue_mode()
 
     def increase_magic_skill(self, modifier):
         self.magic += modifier

@@ -10,6 +10,7 @@ def blocked_by_object(obj, game_state, dx, dy):
     for wall in walls:
         rl_wall_rec = rl.Rectangle(wall.rec.x, wall.rec.y, wall.rec.width, wall.rec.height)
         if rl.check_collision_recs(rec, rl_wall_rec):
+            print('blocked by object')
             return True
     return False
 
@@ -38,10 +39,10 @@ def should_init_dialogue(player, game_state):
     return False
 
 
-def off_the_window(obj, dx, dy):
+def off_the_window(obj, dx, dy, map):
+    #todo map widh
     new_x = obj.rec.x + dx
     new_y = obj.rec.y + dy
-    if 0 <= new_x <= (rl.get_screen_width() - obj.size) and 0 <= new_y <= (
-            rl.get_screen_height() - obj.size):
-        return False
-    return True
+    rect = rl.Rectangle(map.movable_area.x, map.movable_area.y, map.movable_area.width, map.movable_area.height)
+    point = rl.Vector2(new_x, new_y)
+    return not rl.check_collision_point_rec(point, rect)

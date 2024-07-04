@@ -14,8 +14,6 @@ class Player(Character):
         self.hp = 100
         self.magic = 1
         self.mana = 10
-        self.x = x
-        self.y = y
         self.dead = False
         self.deck = Deck()
 

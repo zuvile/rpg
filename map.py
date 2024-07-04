@@ -1,6 +1,7 @@
 from entities.enemy import Enemy
 from entities.friendly import Friendly
 from entities.wall import Wall
+from entities.rectangle import Rectangle
 
 class Map():
     def __init__(self):
@@ -10,6 +11,9 @@ class Map():
         self.add_walls()
         self.add_enemies()
         self.add_friends()
+        self.width = 800
+        self.height = 600
+        self.movable_area = Rectangle(0, 0, self.width, self.height)
 
     def add_walls(self):
         y = 0
@@ -37,3 +41,6 @@ class Map():
 
     def update(self):
         self.clear_dead()
+
+    def set_movable_area(self, x, y, width, height):
+        self.movable_area = Rectangle(x, y, width, height)

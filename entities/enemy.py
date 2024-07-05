@@ -8,14 +8,12 @@ class Enemy(Character):
         texture = 'assets/free_character_1-3.png'
         sub_texture = Rectangle(0, 0, 16, 16)
         scale = 2
-        self.in_animation = False
         self.animation_start_time = 0
         self.is_attacking = False
 
         super().__init__(texture, sub_texture, scale, x, y)
 
     def do_attack(self):
-        self.in_animation = True
         self.is_attacking = True
         self.animation_start_time = rl.get_time()
 
@@ -30,3 +28,6 @@ class Enemy(Character):
         else:
             draw_color = rl.WHITE
         super().draw(draw_color)
+
+    def in_animation(self):
+        return self.is_attacking

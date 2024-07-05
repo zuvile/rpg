@@ -18,7 +18,8 @@ class Player(Character):
         self.deck = Deck()
         self.is_healing = False
         self.heal_animation_start_time = 0
-        self.in_animation = False
+        self.move_animation_start_time = 0
+        self.is_walking = False
 
         super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
 
@@ -33,22 +34,33 @@ class Player(Character):
             return self.move_player(2, 0, game_state)
 
     def draw(self):
+        draw_color = rl.WHITE
         if self.is_healing:
             draw_color = rl.GREEN
             if rl.get_time() - self.heal_animation_start_time > 1:
                 self.is_healing = False
-                self.in_animation = False
-        else:
-            draw_color = rl.WHITE
+                draw_color = rl.WHITE
+
+        if self.is_walking:
+            draw_color = rl.BLUE
+            if rl.get_time() - self.move_animation_start_time > 1:
+                self.is_walking = False
+                draw_color = rl.WHITE
+
         super().draw(draw_color)
 
     def heal(self, health):
-        self.in_animation = True
         self.hp += health
         if self.hp > 100:
             self.hp = 100
             self.is_healing = True
             self.heal_animation_start_time = rl.get_time()
+
+    def auto_move(self, dx, dy):
+        self.is_walking = True
+        self.rec.x += dx
+        self.rec.y += dy
+        self.move_animation_start_time = rl.get_time()
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
@@ -62,3 +74,5 @@ class Player(Character):
     def increase_magic_skill(self, modifier):
         self.magic += modifier
 
+    def in_animation(self):
+        return self.is_walking or self.is_healing

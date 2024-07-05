@@ -12,6 +12,7 @@ class CardSelect(Cursor):
         self.card_played = False
         self.is_moving = False
         self.is_healing = False
+        self.is_attacking = False
         self.map_arr = [[0 for _ in range(19)] for _ in range(11)]
 
     def enter(self, game_state):
@@ -42,6 +43,8 @@ class CardSelect(Cursor):
             self.handle_moving()
         elif self.is_healing:
             self.handle_healing()
+        elif self.is_attacking:
+            self.handle_attacking()
         else:
             self.move_cursor_horizontal(len(self.player.deck.cards))
             self.play_card()
@@ -51,12 +54,17 @@ class CardSelect(Cursor):
                 return
 
             if self.current_card.type == CardType.HEAL:
-                self.handle_heal_card()
+                self.is_healing = True
             elif self.current_card.type == CardType.MOVE:
-                self.handle_move_card()
+                self.is_moving = True
+            elif self.current_card.type == CardType.ATTACK:
+                self.is_attacking = True
 
-    def handle_move_card(self):
-        self.is_moving = True
+    def handle_attacking(self):
+        pts = self.player.do_attack()
+        self.enemy.apply_damage(pts)
+        self.is_attacking = False
+        self.card_played = True
 
     def handle_healing(self):
         self.player.heal(self.current_card.heal)
@@ -89,9 +97,6 @@ class CardSelect(Cursor):
             self.player.auto_move(self.cursor_point.x - self.player.rec.x, self.cursor_point.y - self.player.rec.y)
             self.is_moving = False
             self.card_played = True
-
-    def handle_heal_card(self):
-        self.is_healing = True
 
     def exit_state(self):
         self.current_card = None

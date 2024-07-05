@@ -3,6 +3,7 @@ from entities.rectangle import Rectangle
 from entities.deck import Deck
 from collision import should_init_fight, should_init_dialogue
 import pyray as rl
+import random
 
 class Player(Character):
     def __init__(self, x=0, y=0):
@@ -17,8 +18,10 @@ class Player(Character):
         self.dead = False
         self.deck = Deck()
         self.is_healing = False
+        self.is_attacking = False
         self.heal_animation_start_time = 0
         self.move_animation_start_time = 0
+        self.attack_animation_start_time = 0
         self.is_walking = False
 
         super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
@@ -33,18 +36,22 @@ class Player(Character):
         if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, game_state)
 
-    def draw(self):
+    def draw(self, color=rl.WHITE):
         draw_color = rl.WHITE
         if self.is_healing:
             draw_color = rl.GREEN
             if rl.get_time() - self.heal_animation_start_time > 1:
                 self.is_healing = False
                 draw_color = rl.WHITE
-
         if self.is_walking:
             draw_color = rl.BLUE
             if rl.get_time() - self.move_animation_start_time > 1:
                 self.is_walking = False
+                draw_color = rl.WHITE
+        if self.is_attacking:
+            draw_color = rl.RED
+            if rl.get_time() - self.attack_animation_start_time > 1:
+                self.is_attacking = False
                 draw_color = rl.WHITE
 
         super().draw(draw_color)
@@ -75,4 +82,10 @@ class Player(Character):
         self.magic += modifier
 
     def in_animation(self):
-        return self.is_walking or self.is_healing
+        return self.is_walking or self.is_healing or self.is_attacking
+
+    def do_attack(self):
+        self.is_attacking = True
+        self.attack_animation_start_time = rl.get_time()
+
+        return random.randint(0, self.attack)

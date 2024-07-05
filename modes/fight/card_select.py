@@ -14,10 +14,12 @@ class CardSelect(Cursor):
         self.is_healing = False
         self.is_attacking = False
         self.map_arr = [[0 for _ in range(19)] for _ in range(11)]
+        self.game_state = None
 
     def enter(self, game_state):
         self.player = game_state.player
         self.enemy = game_state.get_interactable()
+        self.game_state = game_state
         if self.cursor_point.x == 0 and self.cursor_point.y == 0:
             self.cursor_point = Vector2(self.player.rec.x, self.player.rec.y)
 
@@ -28,6 +30,7 @@ class CardSelect(Cursor):
         card = self.player.deck.cards[self.cursor_index]
         if is_key_pressed(KEY_ENTER):
             self.current_card = card
+
 
     def draw(self):
         if self.card_played and not self.player.in_animation():
@@ -65,11 +68,13 @@ class CardSelect(Cursor):
         self.enemy.apply_damage(pts)
         self.is_attacking = False
         self.card_played = True
+        self.game_state.add_to_log("You did " + str(pts) + " DMG")
 
     def handle_healing(self):
         self.player.heal(self.current_card.heal)
         self.is_healing = False
         self.card_played = True
+        self.game_state.add_to_log("You healed:" + str(self.current_card.heal) + " HP")
 
     def handle_moving(self):
         semi_transparent_red = Color(255, 0, 0, 128)
@@ -97,6 +102,7 @@ class CardSelect(Cursor):
             self.player.auto_move(self.cursor_point.x - self.player.rec.x, self.cursor_point.y - self.player.rec.y)
             self.is_moving = False
             self.card_played = True
+            self.game_state.add_to_log("You moved.")
 
     def exit_state(self):
         self.current_card = None

@@ -21,6 +21,7 @@ class GameState:
         self.story_mode = StoryMode()
         self.explore_mode = ExploreMode()
         self.last_fight_won = None
+        self._log = []
 
     def set_interactable(self, character: Character):
         self.interacting_with = character
@@ -56,3 +57,11 @@ class GameState:
 
     def pop_render_layer(self):
         self._render_stack.pop()
+
+    def add_to_log(self, message):
+        self._log.append(message)
+        if len(self._log) > 10:
+            self._log.pop(0)
+
+    def get_log(self):
+        return self._log[-5:][::-1]

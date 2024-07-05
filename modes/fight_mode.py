@@ -56,6 +56,9 @@ class FightMode(GameMode, Cursor):
         draw_text("HP: " + str(player.hp), 20*32, 1*32, 16, BLACK)
         draw_text("Mana: " + str(player.mana), 20*32, 3*32, 16, BLACK)
         draw_text("Enemy HP: " + str(enemy.hp), 20*32, 2*32, 16, BLACK)
+        log = game_state.get_log()
+        for i in range(len(log)):
+            draw_text(log[i], 19*32, (5+i)*32, 16, BLACK)
 
     def setup(self, game_state):
         player = game_state.player

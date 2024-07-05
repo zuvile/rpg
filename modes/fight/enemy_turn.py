@@ -26,8 +26,6 @@ class EnemyTurn:
             self.player.apply_damage(dmg)
             self.has_attacked = True
 
-        # self.message_stack.append("The enemy did " + str(dmg) + " damage to you!")
-
     def exit_state(self):
         self.has_attacked = False
         self.done = False

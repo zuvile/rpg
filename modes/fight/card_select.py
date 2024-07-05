@@ -64,11 +64,16 @@ class CardSelect(Cursor):
                 self.is_attacking = True
 
     def handle_attacking(self):
-        pts = self.player.do_attack()
-        self.enemy.apply_damage(pts)
-        self.is_attacking = False
-        self.card_played = True
-        self.game_state.add_to_log("You did " + str(pts) + " DMG")
+        self.draw_grid()
+        if is_key_pressed(KEY_ENTER):
+            if self.map_arr[int(self.cursor_point.y) // 32][int(self.cursor_point.x) // 32] == 1 and self.enemy.rec.x == int(self.cursor_point.x) and self.enemy.rec.y == int(self.cursor_point.y):
+                pts = self.player.do_attack()
+                self.enemy.apply_damage(pts)
+                self.is_attacking = False
+                self.card_played = True
+                self.game_state.add_to_log("You did " + str(pts) + " DMG")
+            else:
+                self.game_state.add_to_log("Invalid attack")
 
     def handle_healing(self):
         self.player.heal(self.current_card.heal)
@@ -77,32 +82,15 @@ class CardSelect(Cursor):
         self.game_state.add_to_log("You healed:" + str(self.current_card.heal) + " HP")
 
     def handle_moving(self):
-        semi_transparent_red = Color(255, 0, 0, 128)
-        player_tile_x = self.player.rec.x // 32
-        player_tile_y = self.player.rec.y // 32
-        for row_index in range(len(self.map_arr)):
-            for tile_index in range(len(self.map_arr[row_index])):
-                if player_tile_x - self.current_card.range <= tile_index <= player_tile_x + self.current_card.range and \
-                        player_tile_y - self.current_card.range <= row_index <= player_tile_y + self.current_card.range:
-                    self.map_arr[row_index][tile_index] = 1
-                else:
-                    self.map_arr[row_index][tile_index] = 0
-
-        for row_index in range(len(self.map_arr)):
-            for tile_index in range(len(self.map_arr[row_index])):
-                if self.map_arr[row_index][tile_index] == 1:
-                    draw_rectangle(tile_index * 32, row_index * 32, 32, 32, semi_transparent_red)
-
-        semi_transparent_green = Color(0, 255, 0, 128)
-        self.move_omnidirectional(self.cursor_point.x, self.cursor_point.y, self.map_arr)
-        origin = Vector2(0, 0)
-        cursor_rect = Rectangle(self.cursor_point.x, self.cursor_point.y, 32, 32)
-        draw_rectangle_pro(cursor_rect,  origin, 0, semi_transparent_green)
+        self.draw_grid()
         if is_key_pressed(KEY_ENTER):
-            self.player.auto_move(self.cursor_point.x - self.player.rec.x, self.cursor_point.y - self.player.rec.y)
-            self.is_moving = False
-            self.card_played = True
-            self.game_state.add_to_log("You moved.")
+            if self.map_arr[int(self.cursor_point.y) // 32][int(self.cursor_point.x) // 32] == 1:
+                self.player.auto_move(self.cursor_point.x - self.player.rec.x, self.cursor_point.y - self.player.rec.y)
+                self.is_moving = False
+                self.card_played = True
+                self.game_state.add_to_log("You moved.")
+            else:
+                self.game_state.add_to_log("Invalid move")
 
     def exit_state(self):
         self.current_card = None
@@ -126,3 +114,26 @@ class CardSelect(Cursor):
         draw_rectangle(19*32, 10*32, 128, 192, GRAY)
         draw_text(curr_card.name, 20*32, 10*32, 20, BLACK)
         draw_text(curr_card.description, 19*32, 11*32, 16, BLACK)
+
+    def draw_grid(self):
+        semi_transparent_red = Color(255, 0, 0, 128)
+        player_tile_x = self.player.rec.x // 32
+        player_tile_y = self.player.rec.y // 32
+        for row_index in range(len(self.map_arr)):
+            for tile_index in range(len(self.map_arr[row_index])):
+                if player_tile_x - self.current_card.range <= tile_index <= player_tile_x + self.current_card.range and \
+                        player_tile_y - self.current_card.range <= row_index <= player_tile_y + self.current_card.range:
+                    self.map_arr[row_index][tile_index] = 1
+                else:
+                    self.map_arr[row_index][tile_index] = 0
+
+        for row_index in range(len(self.map_arr)):
+            for tile_index in range(len(self.map_arr[row_index])):
+                if self.map_arr[row_index][tile_index] == 1:
+                    draw_rectangle(tile_index * 32, row_index * 32, 32, 32, semi_transparent_red)
+
+        semi_transparent_green = Color(0, 255, 0, 128)
+        self.move_omnidirectional(self.cursor_point.x, self.cursor_point.y, self.map_arr)
+        origin = Vector2(0, 0)
+        cursor_rect = Rectangle(self.cursor_point.x, self.cursor_point.y, 32, 32)
+        draw_rectangle_pro(cursor_rect,  origin, 0, semi_transparent_green)

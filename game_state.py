@@ -37,7 +37,6 @@ class GameState:
             friend.update_dialogue_trees()
 
     def push_fight_mode(self):
-        self.fight_mode.prepare_new_fight()
         self._render_stack.push(self.fight_mode)
 
     def push_new_explore_mode(self):

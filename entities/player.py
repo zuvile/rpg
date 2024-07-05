@@ -16,6 +16,9 @@ class Player(Character):
         self.mana = 10
         self.dead = False
         self.deck = Deck()
+        self.is_healing = False
+        self.heal_animation_start_time = 0
+        self.in_animation = False
 
         super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
 
@@ -28,6 +31,24 @@ class Player(Character):
             return self.move_player(-2, 0, game_state)
         if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, game_state)
+
+    def draw(self):
+        if self.is_healing:
+            draw_color = rl.GREEN
+            if rl.get_time() - self.heal_animation_start_time > 1:
+                self.is_healing = False
+                self.in_animation = False
+        else:
+            draw_color = rl.WHITE
+        super().draw(draw_color)
+
+    def heal(self, health):
+        self.in_animation = True
+        self.hp += health
+        if self.hp > 100:
+            self.hp = 100
+            self.is_healing = True
+            self.heal_animation_start_time = rl.get_time()
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):

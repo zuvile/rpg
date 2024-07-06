@@ -1,6 +1,6 @@
 from entities.character import Character
 from typing import Optional
-from dialogue import Dialogue
+from dialogue.dialogue import Dialogue
 from render_stack import RenderStack
 from modes.dialogue_mode import DialogueMode
 from modes.fight_mode import FightMode

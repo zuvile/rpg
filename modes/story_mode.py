@@ -1,5 +1,5 @@
 from modes.talk_mode import TalkMode
-from dialogue import Dialogue
+from dialogue.dialogue import Dialogue
 from actions import Actions
 
 class StoryMode(TalkMode):
@@ -20,4 +20,4 @@ class StoryMode(TalkMode):
     def get_trees_by_day(self, day):
         dialogue = Dialogue()
         if day == 1:
-            return dialogue.load_dialogue_trees('dialogues/dialogue_intro_testing.txt')
+            return dialogue.load_dialogue_trees('dialogue_files/dialogue_intro_testing.txt')

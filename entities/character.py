@@ -1,6 +1,6 @@
 import pyray as rl
 from entities.entity import Entity
-import textures as t
+from util import textures as t
 
 
 class Character(Entity):

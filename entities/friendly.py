@@ -21,7 +21,7 @@ class Friendly(Character):
 
     def update_dialogue_trees(self):
         dialogue = Dialogue()
-        trees = dialogue.load_dialogue_trees('cassius_dialogues.txt')
+        trees = dialogue.load_dialogue_trees('dialogues/cassius_dialogues.txt')
         self.dialogue_trees = trees
 
     def get_dialogue_trees(self):

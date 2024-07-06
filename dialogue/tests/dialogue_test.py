@@ -1,5 +1,8 @@
 import pytest
-from dialogue import Dialogue
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from dialogue.dialogue import Dialogue
 
 @pytest.fixture
 def dialogue():
@@ -16,7 +19,7 @@ def check_node(node, text, speaker, num_children, rel_mods, jmp, render):
 
 
 def test_dialogue_tree(dialogue):
-    trees = dialogue.load_dialogue_trees('dialogue_test.txt')
+    trees = dialogue.load_dialogue_trees('dialogue/tests/dialogue_test.txt')
     tree1 = trees['introduction_cassius']
     tree2 = trees['cassius_ceremony_room']
 

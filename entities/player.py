@@ -1,7 +1,7 @@
 from entities.character import Character
 from entities.rectangle import Rectangle
 from entities.deck import Deck
-from collision import should_init_fight, should_init_dialogue
+from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
 import random
 

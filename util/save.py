@@ -7,7 +7,7 @@ import pickle
 
 class Save:
     def __init__(self):
-        self.save_game_file = 'game_state.pkl'
+        self.save_game_file = '../game_state.pkl'
 
     def getGameState(self, action):
         if action == Actions.CREATE_NEW_SAVE_FILE:

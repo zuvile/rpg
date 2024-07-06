@@ -1,4 +1,4 @@
-from cursor import Cursor
+from util.cursor import Cursor
 from pyray import *
 from entities.card import CardType
 

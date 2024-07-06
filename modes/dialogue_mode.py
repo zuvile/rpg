@@ -1,4 +1,4 @@
-from cursor import Cursor
+from util.cursor import Cursor
 from modes.talk_mode import TalkMode
 from actions import Actions
 

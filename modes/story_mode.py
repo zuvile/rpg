@@ -20,4 +20,4 @@ class StoryMode(TalkMode):
     def get_trees_by_day(self, day):
         dialogue = Dialogue()
         if day == 1:
-            return dialogue.load_dialogue_trees('dialogue_intro.txt')
+            return dialogue.load_dialogue_trees('dialogues/dialogue_intro_testing.txt')

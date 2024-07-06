@@ -1,7 +1,7 @@
 from pyray import *
 from modes.initial_menu_mode import InitialMenuMode
 from actions import Actions
-from save import Save
+from util.save import Save
 
 
 init_window(800, 480, "Game")

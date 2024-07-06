@@ -122,11 +122,3 @@ class Dialogue:
     def handle_render(self, idx, lines, prev, root, line, choice_root):
         prev.render = line.split('=')[1]
         return self.create_tree(idx + 1, lines, prev, root, choice_root)
-
-def main():
-    dialogue = Dialogue()
-    trees = dialogue.load_dialogue_trees('dialogue_test.txt')
-    print(trees)
-
-if __name__ == '__main__':
-    main()

@@ -1,6 +1,6 @@
 from modes.game_mode import GameMode
 from pyray import *
-from cursor import Cursor
+from util.cursor import Cursor
 from modes.fight_state_manager import FightStateManager
 
 

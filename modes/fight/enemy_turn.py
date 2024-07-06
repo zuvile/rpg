@@ -1,4 +1,4 @@
-from pyray import *
+from physics import vector
 
 class EnemyTurn:
     def __init__(self):
@@ -20,6 +20,7 @@ class EnemyTurn:
             return
 
         if not self.has_attacked:
+            #todo something here maybe move?
             self.enemy.do_attack()
             dmg = self.enemy.do_attack()
             self.game_state.add_to_log("Enemy did " + str(dmg) + " DMG")

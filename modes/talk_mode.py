@@ -1,7 +1,7 @@
 from modes.game_mode import GameMode
 from pyray import *
-import textures
-from cursor import Cursor
+from util import textures
+from util.cursor import Cursor
 
 
 class TalkMode(GameMode, Cursor):

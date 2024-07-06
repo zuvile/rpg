@@ -1,5 +1,5 @@
 from entities.rectangle import Rectangle
-from collision import off_the_window, blocked_by_object
+from util.collision import off_the_window, blocked_by_object
 
 # base class for any object
 class Entity:

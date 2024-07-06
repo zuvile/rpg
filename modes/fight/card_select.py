@@ -2,6 +2,14 @@ from util.cursor import Cursor
 from pyray import *
 from entities.card import CardType
 from modes.fight.grid import Grid
+from enum import Enum
+
+
+class PlayerAction(Enum):
+    ATTACK = 1
+    HEAL = 2
+    MOVE = 3
+    IDLE = 4
 
 
 class CardSelect(Cursor):
@@ -12,9 +20,7 @@ class CardSelect(Cursor):
         self.enemy = None
         self.done = False
         self.card_played = False
-        self.is_moving = False
-        self.is_healing = False
-        self.is_attacking = False
+        self.player_action: PlayerAction = PlayerAction.IDLE
         self.map_arr = [[0 for _ in range(19)] for _ in range(11)]
         self.game_state = None
         self.grid = Grid()
@@ -42,11 +48,11 @@ class CardSelect(Cursor):
         if self.card_played and self.player.in_animation():
             return
 
-        if self.is_moving:
+        if self.player_action == PlayerAction.MOVE:
             self.handle_moving()
-        elif self.is_healing:
+        elif self.player_action == PlayerAction.HEAL:
             self.handle_healing()
-        elif self.is_attacking:
+        elif self.player_action == PlayerAction.ATTACK:
             self.handle_attacking()
         else:
             self.move_cursor_horizontal(len(self.player.deck.cards))
@@ -57,24 +63,24 @@ class CardSelect(Cursor):
                 return
 
             if self.current_card.type == CardType.HEAL:
-                self.is_healing = True
+                self.player_action = PlayerAction.HEAL
             elif self.current_card.type == CardType.MOVE:
-                self.is_moving = True
+                self.player_action = PlayerAction.MOVE
             elif self.current_card.type == CardType.ATTACK:
-                self.is_attacking = True
+                self.player_action = PlayerAction.ATTACK
 
     def handle_attacking(self):
         cursor_point = self.grid.draw_grid(self.player, self.enemy, self.current_card, self.game_state)
         if cursor_point is not None:
             pts = self.player.do_attack()
             self.enemy.apply_damage(pts)
-            self.is_attacking = False
+            self.player_action = PlayerAction.IDLE
             self.card_played = True
             self.game_state.add_to_log("You did " + str(pts) + " DMG")
 
     def handle_healing(self):
         self.player.heal(self.current_card.heal)
-        self.is_healing = False
+        self.player_action = PlayerAction.IDLE
         self.card_played = True
         self.game_state.add_to_log("You healed:" + str(self.current_card.heal) + " HP")
 
@@ -82,7 +88,7 @@ class CardSelect(Cursor):
         cursor_point = self.grid.draw_grid(self.player, self.enemy, self.current_card, self.game_state)
         if cursor_point is not None:
             self.player.auto_move(cursor_point.x - self.player.rec.x, cursor_point.y - self.player.rec.y)
-            self.is_moving = False
+            self.player_action = PlayerAction.IDLE
             self.card_played = True
             self.game_state.add_to_log("You moved.")
 

@@ -2,6 +2,7 @@ from modes.game_mode import GameMode
 from pyray import *
 from util import textures
 from util.cursor import Cursor
+from util.textures import load_texture
 
 
 class TalkMode(GameMode, Cursor):
@@ -14,6 +15,8 @@ class TalkMode(GameMode, Cursor):
         self.del_keys = []
         self.current_interactable = None
         self.mode = mode
+        self.showing_heart = False
+        self.heart_animation_start_time = 0
 
     def set_dialogue_trees(self, trees):
         if not self.trees:
@@ -80,6 +83,9 @@ class TalkMode(GameMode, Cursor):
             for key, value in rel_mods.items():
                 for friend in game_state.map.friends:
                     if friend.name == key:
+                        if value > 0:
+                            self.showing_heart = True
+                            self.heart_animation_start_time = get_time()
                         friend.rel += value
             self.done_reading = True
             return self.cursor_index
@@ -87,6 +93,10 @@ class TalkMode(GameMode, Cursor):
     # Write text and choices. Return 0 if no choice was made, otherwise return choice index
     def write_text(self, game_state):
         self.set_interactable(game_state, self.tree)
+        if self.showing_heart:
+            self.draw_heart(self.tree.speaker)
+            if get_time() - self.heart_animation_start_time > 2:
+                self.showing_heart = False
         pages = [self.tree.text[i:i + 64] for i in range(0, len(self.tree.text), 64)]
         if self.curr_page == len(pages) and len(self.tree.children) > 1 and not self.tree.auto_choice:
             self.write_choices()
@@ -118,8 +128,6 @@ class TalkMode(GameMode, Cursor):
         return
 
     def draw_portrait(self):
-        draw_rectangle(0, 0, 200, 32, RAYWHITE)
-        draw_text("Rel pts:" + str(self.current_interactable.rel), 0, 0, 20, BLACK)
         origin = Vector2(0, 0)
         sub_texture = Rectangle(0, 0, 64, 64)
         scale = 3
@@ -142,3 +150,24 @@ class TalkMode(GameMode, Cursor):
             draw_texture(texture, 0, 0, WHITE)
 
         draw_rectangle(0, 352, 800, 128, BLACK)
+
+    def draw_text_with_border(self, text, x, y, font_size, text_color, border_color):
+        # Offsets for the border text
+        offsets = [(-1, -1), (-1, 1), (1, -1), (1, 1), (-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        # Draw the border text
+        for offset in offsets:
+            draw_text(text, x + offset[0], y + offset[1], font_size, border_color)
+
+        # Draw the main text on top
+        draw_text(text, x, y, font_size, text_color)
+
+    def draw_heart(self, name):
+        heart_texture = load_texture('assets/hearts.png')
+        rl_texture = textures.id_to_raylib(heart_texture)
+        sub_texture = Rectangle(0, 0, 32, 32)
+        destination = Rectangle(32, 32, 32, 32)
+        draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, WHITE)
+
+        # Use the new function to draw text with a border
+        self.draw_text_with_border(name, 64, 32, 20, WHITE, BLACK)

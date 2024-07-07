@@ -11,7 +11,7 @@ class Grid(Cursor):
         self.current_card = None
         self.player = None
 
-    def draw_grid(self, player, enemy, current_card, game_state):
+    def select_square(self, player, enemy, current_card, game_state):
         if self.cursor_point.x == 0 and self.cursor_point.y == 0:
             self.cursor_point = Vector2(player.rec.x, player.rec.y)
 

@@ -1,10 +1,10 @@
-from modes.fight.card_select import CardSelect
+from modes.fight.play_card import PlayCard
 from modes.fight.enemy_turn import EnemyTurn
 
 class FightStateManager:
     def __init__(self):
         self.states = {
-            'card_select': CardSelect(),
+            'card_select': PlayCard(),
             'enemy_turn': EnemyTurn()
         }
         self.current_state = None

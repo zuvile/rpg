@@ -34,7 +34,7 @@ title: castle_intro
     Cassius: [He is dressed all in black. His piercing blue eyes widen at the sight of me.]
     Cassius: Who are you?
     Player: What... IS this place?
-    Cassius: [As the man opens his mouth to speak, his eyes drift to your hand and sees the card you are still holding.]
+    Cassius: [As the man opens his mouth to speak, his eyes drift to my hand and he sees the card in my hand.]
     Cassius: It can't be...
     Cassius: [The man pulls out a card from his sleeve. Before  I get the chance to say anything, I feel my hands being tied behind your back, as though my invisible force.]
     Cassius: Come with me.
@@ -46,14 +46,14 @@ title: castle_intro
         -> [Say nothing]
             Player: [I am too scared to speak.]
         end_choices
-    Player: [I AM brought into a room where an old man is sitting behind a desk.]
+    Player: [I am brought into a room where an old man is sitting behind a desk.]
     Cassius: master. This... woman... Appeared just now, and look what she was holding.
     Master: Show me, Cassius.
     Player: [I note the name of the cold man.]
     Cassius: [Cassius rips the card from your hand and shows it to the old man. His eyes widen.]
     Master: Did you bind the card to yourself, woman?
     Player: I don't know what you're talking about... I touched it and... Appeared here.
-    Player: [The men share a look. It's obvious that your words mean something to them that you can't yet comprehend.]
+    Player: [The men share a look. It's obvious that my words mean something to them that I can't comprehend.]
     Master: Then there's only one thing to do.
     Player: [I shudder. My hands are still bound and I can barely move.]
         -> Please. I just want to go home.

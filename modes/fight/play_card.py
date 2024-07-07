@@ -12,7 +12,7 @@ class PlayerAction(Enum):
     IDLE = 4
 
 
-class CardSelect(Cursor):
+class PlayCard(Cursor):
     def __init__(self):
         super().__init__()
         self.current_card = None
@@ -70,7 +70,7 @@ class CardSelect(Cursor):
                 self.player_action = PlayerAction.ATTACK
 
     def handle_attacking(self):
-        cursor_point = self.grid.draw_grid(self.player, self.enemy, self.current_card, self.game_state)
+        cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
         if cursor_point is not None:
             pts = self.player.do_attack()
             self.enemy.apply_damage(pts)
@@ -85,7 +85,7 @@ class CardSelect(Cursor):
         self.game_state.add_to_log("You healed:" + str(self.current_card.heal) + " HP")
 
     def handle_moving(self):
-        cursor_point = self.grid.draw_grid(self.player, self.enemy, self.current_card, self.game_state)
+        cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
         if cursor_point is not None:
             self.player.auto_move(cursor_point.x - self.player.rec.x, cursor_point.y - self.player.rec.y)
             self.player_action = PlayerAction.IDLE

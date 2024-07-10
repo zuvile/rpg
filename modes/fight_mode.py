@@ -16,14 +16,18 @@ class FightMode(GameMode, Cursor):
         if not game_state.is_layer_top(self):
             return
 
+        if not game_state.player.is_alive():
+            self.handle_loss(game_state)
+            return
+        if not game_state.get_interactable().is_alive():
+            self.handle_win(game_state)
+            return
+
         self.draw_ui(game_state)
+
         if self.start_of_fight:
             self.setup(game_state)
             self.start_of_fight = False
-        if not game_state.player.is_alive():
-            self.handle_loss(game_state)
-        if not game_state.get_interactable().is_alive():
-            self.handle_win(game_state)
 
         if self.player_turn:
             self.fight_state_manager.set_state('card_select', game_state)
@@ -36,10 +40,16 @@ class FightMode(GameMode, Cursor):
             self.player_turn = not self.player_turn
 
     def handle_loss(self, game_state):
-        self.handle_end_of_fight(game_state)
+        draw_rectangle(0, 0, 800, 480, WHITE)
+        draw_text("You lose!", 400, 240, 32, BLACK)
+        if is_key_pressed(KEY_ENTER):
+            self.handle_end_of_fight(game_state)
 
     def handle_win(self, game_state):
-        self.handle_end_of_fight(game_state)
+        draw_rectangle(0, 0, 800, 480, WHITE)
+        draw_text("You win!", 400, 240, 32, BLACK)
+        if is_key_pressed(KEY_ENTER):
+            self.handle_end_of_fight(game_state)
 
     def handle_end_of_fight(self, game_state):
         game_state.pop_render_layer()

@@ -20,6 +20,7 @@ class Enemy(Character):
         return random.randint(0, self.attack)
 
     def draw(self, color=rl.WHITE):
+        self.draw_health()
         if self.is_attacking:
             draw_color = rl.RED
             if rl.get_time() - self.animation_start_time > 1:
@@ -30,3 +31,7 @@ class Enemy(Character):
 
     def in_animation(self):
         return self.is_attacking
+
+    def draw_health(self):
+        rl.draw_rectangle(self.rec.x, self.rec.y - 8, 32, 8, rl.WHITE)
+        rl.draw_rectangle(self.rec.x, self.rec.y - 8, self.hp, 8, rl.RED)

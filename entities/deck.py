@@ -33,6 +33,8 @@ class Deck:
                 colour = GREEN if self.flash_duration <= 0 else flash_color
             draw_rectangle(x + 32, y, 64, 64, colour)
             draw_text(card.name, x + 32, y, 20, BLACK)
+            if card.tmp_buff != 0:
+                draw_text("+ " + str(card.tmp_buff), x + 32, y + 32, 20, BLACK)
             x += 62
 
     def in_animation(self):

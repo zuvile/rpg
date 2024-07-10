@@ -24,7 +24,6 @@ class Enemy(Character):
             draw_color = rl.RED
             if rl.get_time() - self.animation_start_time > 1:
                 self.is_attacking = False
-                self.in_animation = False
         else:
             draw_color = rl.WHITE
         super().draw(draw_color)

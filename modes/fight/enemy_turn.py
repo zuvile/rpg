@@ -15,7 +15,7 @@ class EnemyTurn:
         self.game_state = game_state
 
     def draw(self):
-        if self.has_attacked and not self.enemy.in_animation:
+        if self.has_attacked and not self.enemy.in_animation():
             self.done = True
             return
 

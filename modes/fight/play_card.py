@@ -40,13 +40,12 @@ class PlayCard(Cursor):
         if self.card_played and not self.player.in_animation() and not self.player.deck.in_animation():
             self.done = True
             return
-
-        self.player.deck.draw_card_deck(self.cursor_index)
+        if not self.enemy.in_animation():
+            self.player.deck.draw_card_deck(self.cursor_index)
 
         #wait for animations to finish
         if self.player.in_animation() or self.player.deck.in_animation():
             return
-
         if self.player_action == PlayerAction.MOVE:
             self.handle_moving()
         elif self.player_action == PlayerAction.HEAL:
@@ -74,6 +73,7 @@ class PlayCard(Cursor):
 
     def handle_attacking(self):
         cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
+        self.handle_cancel()
         if cursor_point is not None:
             pts = self.player.do_attack()
             self.enemy.apply_damage(pts)
@@ -83,6 +83,7 @@ class PlayCard(Cursor):
             self.current_card = None
 
     def handle_healing(self):
+        self.handle_cancel()
         self.player.heal(self.current_card.get_heal())
         self.player_action = PlayerAction.IDLE
         self.card_played = True
@@ -91,6 +92,7 @@ class PlayCard(Cursor):
 
     def handle_moving(self):
         cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
+        self.handle_cancel()
         if cursor_point is not None:
             self.player.auto_move(cursor_point.x - self.player.rec.x, cursor_point.y - self.player.rec.y)
             self.player_action = PlayerAction.IDLE
@@ -114,3 +116,9 @@ class PlayCard(Cursor):
         draw_rectangle(19 * 32, 10 * 32, 128, 192, GRAY)
         draw_text(curr_card.name, 20 * 32, 10 * 32, 20, BLACK)
         draw_text(curr_card.get_description(), 19 * 32, 11 * 32, 16, BLACK)
+
+    def handle_cancel(self):
+        if is_key_pressed(KEY_ESCAPE):
+            self.player_action = PlayerAction.IDLE
+            self.current_card = None
+            return

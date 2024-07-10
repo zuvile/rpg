@@ -20,8 +20,8 @@ class Grid(Cursor):
         player_tile_y = player.rec.y // 32
         for row_index in range(len(self.map_arr)):
             for tile_index in range(len(self.map_arr[row_index])):
-                if player_tile_x - current_card.range <= tile_index <= player_tile_x + current_card.range and \
-                        player_tile_y - current_card.range <= row_index <= player_tile_y + current_card.range:
+                if player_tile_x - current_card.get_range() <= tile_index <= player_tile_x + current_card.get_range() and \
+                        player_tile_y - current_card.get_range() <= row_index <= player_tile_y + current_card.get_range():
                     self.map_arr[row_index][tile_index] = 1
                 else:
                     self.map_arr[row_index][tile_index] = 0

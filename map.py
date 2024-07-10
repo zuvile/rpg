@@ -28,8 +28,8 @@ class Map():
 
     def add_friends(self):
         self.friends.append(Friendly('Cassius', 'assets/portraits/cassius_normal.png',  3 * 32, 6 * 32, 100, 100, 100, 100, 100))
-        self.friends.append(Friendly('Mother', 'assets/portraits/placeholder.png', 3 * 32, 8 * 32))
-        self.friends.append(Friendly('Master', 'assets/portraits/placeholder.png', 3 * 32, 10 * 32))
+        self.friends.append(Friendly('Mother', 'assets/portraits/placeholder.png', -1 * 32, -1 * 32))
+        self.friends.append(Friendly('Master', 'assets/portraits/placeholder.png', -1 * 32, -1 * 32))
 
     def add_enemies(self):
         self.enemies.append(Enemy(5 * 32, 5 * 32))

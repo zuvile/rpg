@@ -17,6 +17,7 @@ class TalkMode(GameMode, Cursor):
         self.mode = mode
         self.showing_heart = False
         self.heart_animation_start_time = 0
+        self.liked_choice = False
 
     def set_dialogue_trees(self, trees):
         if not self.trees:
@@ -83,18 +84,19 @@ class TalkMode(GameMode, Cursor):
             for key, value in rel_mods.items():
                 for friend in game_state.map.friends:
                     if friend.name == key:
-                        if value > 0:
-                            self.showing_heart = True
-                            self.heart_animation_start_time = get_time()
+                        self.showing_heart = True
+                        self.heart_animation_start_time = get_time()
                         friend.rel += value
+                        self.liked_choice = True if value > 0 else False
             self.done_reading = True
             return self.cursor_index
 
     # Write text and choices. Return 0 if no choice was made, otherwise return choice index
     def write_text(self, game_state):
         self.set_interactable(game_state, self.tree)
+        #this will probably not work with multiple speakers
         if self.showing_heart:
-            self.draw_heart(self.tree.speaker)
+            self.draw_heart(self.tree.speaker, self.liked_choice)
             if get_time() - self.heart_animation_start_time > 2:
                 self.showing_heart = False
         pages = [self.tree.text[i:i + 64] for i in range(0, len(self.tree.text), 64)]
@@ -152,22 +154,23 @@ class TalkMode(GameMode, Cursor):
         draw_rectangle(0, 352, 800, 128, BLACK)
 
     def draw_text_with_border(self, text, x, y, font_size, text_color, border_color):
-        # Offsets for the border text
         offsets = [(-1, -1), (-1, 1), (1, -1), (1, 1), (-1, 0), (1, 0), (0, -1), (0, 1)]
-
-        # Draw the border text
         for offset in offsets:
             draw_text(text, x + offset[0], y + offset[1], font_size, border_color)
 
-        # Draw the main text on top
         draw_text(text, x, y, font_size, text_color)
 
-    def draw_heart(self, name):
+    def draw_heart(self, name, liked):
         heart_texture = load_texture('assets/hearts.png')
         rl_texture = textures.id_to_raylib(heart_texture)
-        sub_texture = Rectangle(0, 0, 32, 32)
-        destination = Rectangle(32, 32, 32, 32)
-        draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, WHITE)
 
-        # Use the new function to draw text with a border
+        if liked:
+            sub_texture = Rectangle(0, 0, 32, 32)
+            destination = Rectangle(32, 32, 32, 32)
+            draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, RED)
+        else:
+            sub_texture = Rectangle(64, 96, 32, 32)
+            destination = Rectangle(32, 32, 32, 32)
+            draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, WHITE)
+
         self.draw_text_with_border(name, 64, 32, 20, WHITE, BLACK)

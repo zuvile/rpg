@@ -44,14 +44,20 @@ class FightMode(GameMode, Cursor):
         draw_text("You lose!", 400, 240, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
+            game_state.last_fight_won = False
 
     def handle_win(self, game_state):
         draw_rectangle(0, 0, 800, 480, WHITE)
         draw_text("You win!", 400, 240, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
+            game_state.last_fight_won = True
 
     def handle_end_of_fight(self, game_state):
+        player = game_state.player
+        enemy = game_state.get_interactable()
+        player.is_in_fight = False
+        enemy.is_in_fight = False
         game_state.pop_render_layer()
         return
 
@@ -73,6 +79,8 @@ class FightMode(GameMode, Cursor):
     def setup(self, game_state):
         player = game_state.player
         enemy = game_state.get_interactable()
+        enemy.is_in_fight = True
+        player.is_in_fight = True
         nearest_player_x = round(player.rec.x / 32) * 32
         nearest_player_y = round(player.rec.y / 32) * 32
         player.rec.x = nearest_player_x

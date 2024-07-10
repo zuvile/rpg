@@ -15,6 +15,8 @@ class Character(Entity):
         self.texture = texture
         self.scale = scale
         self.sub_texture = sub_texture
+        self.max_hp = hp
+        self.is_in_fight = False
 
     def apply_damage(self, damage):
         self.hp -= damage

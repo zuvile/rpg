@@ -1,5 +1,13 @@
 title: cassius_introduction
-Cassius: See?
+Cassius: Let's fight.
+$init_fight
+    -> Win
+    Cassius: Impossible... How???
+    end_choices
+    -> Lose
+    Cassius: Not bad.
+    end_choices
+Cassius: Hold onto your deck. You'll need it for what's to come.
 Player: You...
     -> [Flirt] Wow. You're really good at this.
     $rel_mod(Cassius)=10
@@ -8,7 +16,3 @@ Player: You...
     $rel_mod(Cassius)=-10
     Cassius: We'll see about that.
 Player: [He steps away and I am left alone]
-
-
-
-

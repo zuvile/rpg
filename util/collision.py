@@ -10,7 +10,6 @@ def blocked_by_object(obj, game_state, dx, dy):
     for wall in walls:
         rl_wall_rec = rl.Rectangle(wall.rec.x, wall.rec.y, wall.rec.width, wall.rec.height)
         if rl.check_collision_recs(rec, rl_wall_rec):
-            print('blocked by object')
             return True
     return False
 
@@ -19,8 +18,8 @@ def should_init_fight(player, game_state):
     map = game_state.map
     enemies = map.enemies
     for enemy in enemies:
-        player_rl_rec = rl.Rectangle(player.rec.x, player.rec.y, player.size, player.size)
-        enemy_rl_rec = rl.Rectangle(enemy.rec.x, enemy.rec.y, enemy.size, enemy.size)
+        player_rl_rec = rl.Rectangle(player.rec.x, player.rec.y, 32, 32)
+        enemy_rl_rec = rl.Rectangle(enemy.rec.x, enemy.rec.y, 32, 32)
         if rl.check_collision_recs(player_rl_rec, enemy_rl_rec):
             game_state.set_interactable(enemy)
             return True
@@ -31,8 +30,8 @@ def should_init_dialogue(player, game_state):
     map = game_state.map
     friends = map.friends
     for friend in friends:
-        friend_rl_rec = rl.Rectangle(friend.rec.x, friend.rec.y, friend.size, friend.size)
-        player_rl_rec = rl.Rectangle(player.rec.x, player.rec.y, player.size, player.size)
+        friend_rl_rec = rl.Rectangle(friend.rec.x, friend.rec.y, 32, 32)
+        player_rl_rec = rl.Rectangle(player.rec.x, player.rec.y, 32, 32)
         if rl.check_collision_recs(player_rl_rec, friend_rl_rec):
             game_state.set_interactable(friend)
             return True

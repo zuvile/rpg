@@ -4,12 +4,13 @@ from entities.deck import Deck
 from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
 import random
+from entities.character_elements import draw_health_bar
 
 class Player(Character):
     def __init__(self, x=0, y=0):
-        texture = 'assets/player.png'
-        sub_texture = Rectangle(0, 0, 32, 32)
-        scale = 2
+        texture = 'assets/rogues.png'
+        sub_texture = Rectangle(64, 64, 32, 32)
+        scale = 1
         self.attack = 10
         self.ac = 5
         self.hp = 100
@@ -37,6 +38,8 @@ class Player(Character):
             return self.move_player(2, 0, game_state)
 
     def draw(self, color=rl.WHITE):
+        if self.is_in_fight:
+            draw_health_bar(rl.GREEN, self)
         draw_color = rl.WHITE
         if self.is_healing:
             draw_color = rl.GREEN

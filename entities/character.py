@@ -1,6 +1,11 @@
 import pyray as rl
 from entities.entity import Entity
 from util import textures as t
+from enum import Enum
+
+class CharacterType(Enum):
+    PLAYER = 1
+    AI = 2
 
 
 class Character(Entity):
@@ -17,6 +22,7 @@ class Character(Entity):
         self.sub_texture = sub_texture
         self.max_hp = hp
         self.is_in_fight = False
+        self.type = CharacterType.AI
 
     def apply_damage(self, damage):
         self.hp -= damage

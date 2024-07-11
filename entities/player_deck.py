@@ -1,7 +1,7 @@
 from entities.card import Card, CardType
 from pyray import *
 
-class Deck:
+class PlayerDeck:
     def __init__(self):
         self.is_flashing = False
         self.flash_duration = 0
@@ -11,7 +11,7 @@ class Deck:
             Card('Move', CardType.MOVE, 0, 0, 2, 0),
             Card('Buff', CardType.BUFF, 0, 0, 0, 1),
             # range is 100 for now, need to think about optimal number
-            Card('Dash and slash', CardType.DASH_AND_SLASH, 10, 0, 100, 0, True),
+            Card('Dash and slash', CardType.DASH_AND_SLASH, 10, 0, 0, 0, True),
         ]
 
     def buff_all_cards(self, buff_card):

@@ -3,7 +3,7 @@ from pyray import *
 from entities.card import CardType
 from modes.fight.grid import Grid
 
-class PlayCard(Cursor):
+class PlayerTurn(Cursor):
     def __init__(self):
         super().__init__()
         self.current_card = None
@@ -48,13 +48,15 @@ class PlayCard(Cursor):
             self.draw_selected_card()
             self.play_card()
         else:
-           self.action_handlers[self.current_card.type]()
+            self.action_handlers[self.current_card.type]()
 
+    #this is not done using a card, fix this
     def handle_attacking(self):
         cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
         self.handle_cancel()
         if cursor_point is not None:
-            pts = self.player.do_attack()
+            self.player.do_attack()
+            pts = self.current_card.get_damage()
             self.enemy.apply_damage(pts)
             self.card_played = True
             self.game_state.add_to_log("You did " + str(pts) + " DMG")
@@ -69,7 +71,8 @@ class PlayCard(Cursor):
 
     def handle_dash_and_slash(self):
         if self.has_moved:
-            pts = self.player.do_attack()
+            self.player.do_attack()
+            pts = self.current_card.get_damage()
             self.enemy.apply_damage(pts)
             self.card_played = True
             self.game_state.add_to_log("You did " + str(pts) + " DMG")

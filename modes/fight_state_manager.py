@@ -1,16 +1,15 @@
-from modes.fight.play_card import PlayCard
+from modes.fight.player_turn import PlayerTurn
 from modes.fight.enemy_turn import EnemyTurn
 
 class FightStateManager:
     def __init__(self):
         self.states = {
-            'card_select': PlayCard(),
+            'player_turn': PlayerTurn(),
             'enemy_turn': EnemyTurn()
         }
         self.current_state = None
 
     def set_state(self, state, game_state):
-        #todo refactor
         if self.current_state is not None and self.states[state] == self.current_state:
             self.current_state.enter(game_state)
             return

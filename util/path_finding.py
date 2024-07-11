@@ -1,3 +1,6 @@
+import math
+
+#using bfs to find the shortest path between two points
 def find_path(start, end, map_arr):
     seen = set()
     prev = {}
@@ -27,6 +30,7 @@ def all_neighbours_seen(neighbours, seen):
             return False
     return True
 
+
 def get_neighbours(curr, map_arr):
     neighbours = []
     x = curr[0]
@@ -43,5 +47,6 @@ def get_neighbours(curr, map_arr):
 
     return neighbours
 
-
+def get_distance(start: tuple, end: tuple):
+    return math.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
 

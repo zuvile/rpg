@@ -1,4 +1,4 @@
-from entities.enemy import Enemy
+from entities.enemies.monster_melee import MonsterMelee
 from entities.friendly import Friendly
 from entities.wall import Wall
 from entities.rectangle import Rectangle
@@ -32,7 +32,7 @@ class Map():
         self.friends.append(Friendly('Master', 'assets/portraits/placeholder.png', -1 * 32, -1 * 32))
 
     def add_enemies(self):
-        self.enemies.append(Enemy(5 * 32, 5 * 32))
+        self.enemies.append(MonsterMelee(5 * 32, 5 * 32))
 
     def clear_dead(self):
         for enemy in self.enemies:

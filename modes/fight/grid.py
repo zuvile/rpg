@@ -1,7 +1,7 @@
 from pyray import *
 from util.cursor import Cursor
 from entities.card import CardType
-from util.path_finding import find_path as fp
+from util.path_finding import find_path as fp, get_neighbours, get_distance
 
 
 class Grid(Cursor):
@@ -54,7 +54,7 @@ class Grid(Cursor):
         y = enemy.rec.y // 32
 
         if current_card.type == CardType.DASH_AND_SLASH:
-            possible_destinations = self.get_surounding_area(x, y, current_card.get_range())
+            possible_destinations = self.get_surounding_area(x, y)
             for row_index in range(len(self.map_arr)):
                 for tile_index in range(len(self.map_arr[row_index])):
                     if [tile_index, row_index] in possible_destinations:
@@ -89,12 +89,32 @@ class Grid(Cursor):
 
         return path
 
+    def find_closest_to_player(self, player, enemy):
+        player_point = tuple([player.rec.x // 32, player.rec.y // 32])
+        enemy_point = tuple([enemy.rec.x // 32, enemy.rec.y // 32])
+        neighbours = get_neighbours(player_point, self.map_arr)
+        closest = None
+        min_distance = 100000
+        for neighbour in neighbours:
+            distance = get_distance(neighbour, enemy_point)
+            if distance < min_distance:
+                min_distance = distance
+                closest = neighbour
+        if closest is not None:
+            return Vector2(closest[0] * 32, closest[1] * 32)
+        else:
+            return None
+
+    #todo the player is too far away, move to nearest square
+    def find_closest_by_range(self, player, enemy):
+        pass
+
     def get_surounding_area(self, x, y, range=1):
-        return [[x, y - 1],
-                [x + 1, y - 1],
-                [x + 1, y],
-                [x + 1, y + 1],
-                [x, y + 1],
-                [x - 1, y + 1],
-                [x - 1, y],
-                [x - 1, y - 1]]
+        return [[x, y - range],
+                [x + range, y - range],
+                [x + range, y],
+                [x + range, y + range],
+                [x, y + range],
+                [x - range, y + range],
+                [x - range, y],
+                [x - range, y - range]]

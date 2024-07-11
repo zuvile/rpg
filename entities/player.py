@@ -1,10 +1,11 @@
 from entities.character import Character
 from entities.rectangle import Rectangle
-from entities.deck import Deck
+from entities.player_deck import PlayerDeck
 from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
 import random
 from entities.character_elements import draw_health_bar
+from entities.character import CharacterType
 
 class Player(Character):
     def __init__(self, x=0, y=0):
@@ -17,7 +18,7 @@ class Player(Character):
         self.magic = 1
         self.mana = 10
         self.dead = False
-        self.deck = Deck()
+        self.deck = PlayerDeck()
         self.is_healing = False
         self.is_attacking = False
         self.heal_animation_start_time = 0
@@ -28,6 +29,7 @@ class Player(Character):
         self.path_index = 0
         self.is_walking = False
         self.path = []
+        self.type = CharacterType.PLAYER
 
         super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
 
@@ -100,5 +102,3 @@ class Player(Character):
     def do_attack(self):
         self.is_attacking = True
         self.attack_animation_start_time = rl.get_time()
-
-        return random.randint(0, self.attack)

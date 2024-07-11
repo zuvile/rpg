@@ -31,7 +31,7 @@ class FightMode(GameMode, Cursor):
             self.start_of_fight = False
 
         if self.player_turn:
-            self.fight_state_manager.set_state('card_select', game_state)
+            self.fight_state_manager.set_state('player_turn', game_state)
         else:
             self.fight_state_manager.set_state('enemy_turn', game_state)
 

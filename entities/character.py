@@ -4,7 +4,7 @@ from util import textures as t
 
 
 class Character(Entity):
-    def __init__(self, texture, sub_texture, scale, x=0, y=0, size=32, attack=10, ac=5, hp=1, magic=1, mana=10):
+    def __init__(self, texture, sub_texture, scale, x=0, y=0, size=32, attack=10, ac=5, hp=10, magic=1, mana=10):
         super().__init__(x, y, size)
         self.attack = attack
         self.ac = ac

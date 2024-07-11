@@ -45,6 +45,7 @@ class TalkMode(GameMode, Cursor):
             return self.advance_to_next_node(idx, game_state)
 
     def advance_after_fight(self, game_state):
+        # 0 is win, 1 is lose
         child_key = 0 if game_state.last_fight_won else 1
         self.tree = self.tree.children[child_key].children[0]
         game_state.fight_from_dialogue = False

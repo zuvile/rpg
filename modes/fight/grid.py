@@ -15,16 +15,12 @@ class Grid(Cursor):
         if self.cursor_point.x == 0 and self.cursor_point.y == 0:
             self.cursor_point = Vector2(player.rec.x, player.rec.y)
 
+        if current_card.type == CardType.DASH_AND_SLASH:
+            self.fill_grid_for_dash_and_slash(enemy, current_card)
+        else:
+            self.fill_grid_for_basic_range(player, current_card)
+
         semi_transparent_red = Color(255, 0, 0, 128)
-        player_tile_x = player.rec.x // 32
-        player_tile_y = player.rec.y // 32
-        for row_index in range(len(self.map_arr)):
-            for tile_index in range(len(self.map_arr[row_index])):
-                if player_tile_x - current_card.get_range() <= tile_index <= player_tile_x + current_card.get_range() and \
-                        player_tile_y - current_card.get_range() <= row_index <= player_tile_y + current_card.get_range():
-                    self.map_arr[row_index][tile_index] = 1
-                else:
-                    self.map_arr[row_index][tile_index] = 0
 
         for row_index in range(len(self.map_arr)):
             for tile_index in range(len(self.map_arr[row_index])):
@@ -41,6 +37,37 @@ class Grid(Cursor):
         else:
             return None
 
+    def fill_grid_for_basic_range(self, player, current_card):
+        player_tile_x = player.rec.x // 32
+        player_tile_y = player.rec.y // 32
+        for row_index in range(len(self.map_arr)):
+            for tile_index in range(len(self.map_arr[row_index])):
+                if player_tile_x - current_card.get_range() <= tile_index <= player_tile_x + current_card.get_range() and \
+                        player_tile_y - current_card.get_range() <= row_index <= player_tile_y + current_card.get_range():
+                    self.map_arr[row_index][tile_index] = 1
+                else:
+                    self.map_arr[row_index][tile_index] = 0
+
+    def fill_grid_for_dash_and_slash(self, enemy, current_card):
+        x = enemy.rec.x // 32
+        y = enemy.rec.y // 32
+
+        if current_card.type == CardType.DASH_AND_SLASH:
+            possible_destinations = [[x, y - 1],
+                                     [x + 1, y - 1],
+                                     [x + 1, y],
+                                     [x + 1, y + 1],
+                                     [x, y + 1],
+                                     [x - 1, y + 1],
+                                     [x - 1, y],
+                                     [x - 1, y - 1]]
+            for row_index in range(len(self.map_arr)):
+                for tile_index in range(len(self.map_arr[row_index])):
+                    if [tile_index, row_index] in possible_destinations:
+                        self.map_arr[row_index][tile_index] = 1
+                    else:
+                        self.map_arr[row_index][tile_index] = 0
+
     def valid_move(self, enemy, game_state, action):
         result = None
         if action == CardType.ATTACK:
@@ -55,5 +82,26 @@ class Grid(Cursor):
             result = self.map_arr[int(self.cursor_point.y) // 32][int(self.cursor_point.x) // 32] == 1
             if not result:
                 game_state.add_to_log("Invalid move")
+        elif action == CardType.DASH_AND_SLASH:
+            # maybe I should use card range here?
+            result = self.map_arr[int(self.cursor_point.y) // 32][int(self.cursor_point.x) // 32] == 1
+            if not result:
+                game_state.add_to_log("Invalid dash and slash")
 
         return result
+
+    def find_path(self, player, cursor_point):
+        player_tile_x = player.rec.x // 32
+        player_tile_y = player.rec.y // 32
+        cursor_tile_x = cursor_point.x // 32
+        cursor_tile_y = cursor_point.y // 32
+        path = []
+
+    def get_surounding_area(self, x, y, range=1):
+        return [[x + range, y - range],
+                [x + range, y],
+                [x + range, y + range],
+                [x, y + range],
+                [x - range, y + range],
+                [x - range, y],
+                [x - range, y - range]]

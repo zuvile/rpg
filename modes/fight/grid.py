@@ -1,6 +1,7 @@
 from pyray import *
 from util.cursor import Cursor
 from entities.card import CardType
+from util.path_finding import find_path as fp
 
 
 class Grid(Cursor):
@@ -53,14 +54,7 @@ class Grid(Cursor):
         y = enemy.rec.y // 32
 
         if current_card.type == CardType.DASH_AND_SLASH:
-            possible_destinations = [[x, y - 1],
-                                     [x + 1, y - 1],
-                                     [x + 1, y],
-                                     [x + 1, y + 1],
-                                     [x, y + 1],
-                                     [x - 1, y + 1],
-                                     [x - 1, y],
-                                     [x - 1, y - 1]]
+            possible_destinations = self.get_surounding_area(x, y, current_card.get_range())
             for row_index in range(len(self.map_arr)):
                 for tile_index in range(len(self.map_arr[row_index])):
                     if [tile_index, row_index] in possible_destinations:
@@ -91,17 +85,16 @@ class Grid(Cursor):
         return result
 
     def find_path(self, player, cursor_point):
-        player_tile_x = player.rec.x // 32
-        player_tile_y = player.rec.y // 32
-        cursor_tile_x = cursor_point.x // 32
-        cursor_tile_y = cursor_point.y // 32
-        path = []
+        path = fp(player.rec, cursor_point, self.map_arr)
+
+        return path
 
     def get_surounding_area(self, x, y, range=1):
-        return [[x + range, y - range],
-                [x + range, y],
-                [x + range, y + range],
-                [x, y + range],
-                [x - range, y + range],
-                [x - range, y],
-                [x - range, y - range]]
+        return [[x, y - 1],
+                [x + 1, y - 1],
+                [x + 1, y],
+                [x + 1, y + 1],
+                [x, y + 1],
+                [x - 1, y + 1],
+                [x - 1, y],
+                [x - 1, y - 1]]

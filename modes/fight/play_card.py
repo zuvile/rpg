@@ -13,6 +13,7 @@ class PlayCard(Cursor):
         self.card_played = False
         self.game_state = None
         self.grid = Grid()
+        self.has_moved = False
 
         self.action_handlers = {
             CardType.ATTACK: self.handle_attacking,
@@ -67,26 +68,27 @@ class PlayCard(Cursor):
         self.current_card = None
 
     def handle_dash_and_slash(self):
-        #cursor point is at enemy
-        cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
-        self.handle_cancel()
-        if cursor_point is not None:
-            #find path to enemy
-            path = self.grid.find_path(self.player, cursor_point)
-            # move to closest square to enemy
-            self.player.auto_move(cursor_point.x - self.player.rec.x, cursor_point.y - self.player.rec.y)
-            #attack enemy
+        if self.has_moved:
             pts = self.player.do_attack()
             self.enemy.apply_damage(pts)
             self.card_played = True
             self.game_state.add_to_log("You did " + str(pts) + " DMG")
             self.current_card = None
+            self.has_moved = False
+        else:
+            cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
+            self.handle_cancel()
+            if cursor_point is not None:
+                path = self.grid.find_path(self.player, cursor_point)
+                self.player.auto_move(path)
+                self.has_moved = True
 
     def handle_moving(self):
         cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
         self.handle_cancel()
         if cursor_point is not None:
-            self.player.auto_move(cursor_point.x - self.player.rec.x, cursor_point.y - self.player.rec.y)
+            path = self.grid.find_path(self.player, cursor_point)
+            self.player.auto_move(path)
             self.card_played = True
             self.current_card = None
             self.game_state.add_to_log("You moved.")

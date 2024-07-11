@@ -23,7 +23,11 @@ class Player(Character):
         self.heal_animation_start_time = 0
         self.move_animation_start_time = 0
         self.attack_animation_start_time = 0
+        self.move_speed = 1.0
+        self.last_move_time = 0
+        self.path_index = 0
         self.is_walking = False
+        self.path = []
 
         super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
 
@@ -46,11 +50,15 @@ class Player(Character):
             if rl.get_time() - self.heal_animation_start_time > 1:
                 self.is_healing = False
                 draw_color = rl.WHITE
-        if self.is_walking:
-            draw_color = rl.BLUE
-            if rl.get_time() - self.move_animation_start_time > 1:
-                self.is_walking = False
-                draw_color = rl.WHITE
+        if self.is_walking and rl.get_time() - self.last_move_time >= self.move_speed:
+            if self.path_index < len(self.path):
+                next_pos = self.path[self.path_index]
+                self.rec.x = next_pos[0] * 32  # Assuming each square is 32x32 pixels
+                self.rec.y = next_pos[1] * 32
+                self.path_index += 1
+                self.last_move_time = rl.get_time()
+            else:
+                self.is_walking = False  # Finished walking
         if self.is_attacking:
             draw_color = rl.RED
             if rl.get_time() - self.attack_animation_start_time > 1:
@@ -66,11 +74,13 @@ class Player(Character):
             self.is_healing = True
             self.heal_animation_start_time = rl.get_time()
 
-    def auto_move(self, dx, dy):
+    def auto_move(self, path):
         self.is_walking = True
-        self.rec.x += dx
-        self.rec.y += dy
+        self.path_index = 0
         self.move_animation_start_time = rl.get_time()
+        self.last_move_time = rl.get_time()
+        self.path = path
+
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):

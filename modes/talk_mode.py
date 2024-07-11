@@ -26,14 +26,12 @@ class TalkMode(GameMode, Cursor):
     def draw(self, game_state):
         if not game_state.is_layer_top(self):
             return
+
         if len(self.trees) == 0:
             return self.write_nothing_say(game_state)
-        if game_state.last_fight_won is not None and game_state.last_fight_won:
-            self.tree = self.tree.children[0].children[0]
-            game_state.last_fight_won = None
-        elif game_state.last_fight_won is not None and not game_state.last_fight_won:
-            self.tree = self.tree.children[1].children[0]
-            game_state.last_fight_won = None
+
+        if game_state.fight_from_dialogue:
+            self.advance_after_fight(game_state)
 
         if self.tree is None:
             first_key = next(iter(self.trees))
@@ -46,6 +44,12 @@ class TalkMode(GameMode, Cursor):
         if self.done_reading:
             return self.advance_to_next_node(idx, game_state)
 
+    def advance_after_fight(self, game_state):
+        child_key = 0 if game_state.last_fight_won else 1
+        self.tree = self.tree.children[child_key].children[0]
+        game_state.fight_from_dialogue = False
+        game_state.last_fight_won = None
+
     def advance_to_next_node(self, idx, game_state):
         if self.tree.jmp is not None:
             self.del_keys.append(self.tree.jmp)
@@ -53,6 +57,7 @@ class TalkMode(GameMode, Cursor):
             return
         if self.tree.init_fight:
             self.done_reading = False
+            game_state.fight_from_dialogue = True
             game_state.push_fight_mode()
             return
 
@@ -167,7 +172,7 @@ class TalkMode(GameMode, Cursor):
         if liked:
             sub_texture = Rectangle(0, 0, 32, 32)
             destination = Rectangle(32, 32, 32, 32)
-            draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, RED)
+            draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, WHITE)
         else:
             sub_texture = Rectangle(64, 96, 32, 32)
             destination = Rectangle(32, 32, 32, 32)

@@ -17,10 +17,10 @@ class GameState:
         self.day = 0
         self._render_stack = RenderStack(self)
         self.dialogue_mode = DialogueMode()
-        self.fight_mode = FightMode()
         self.story_mode = StoryMode()
         self.explore_mode = ExploreMode()
         self.last_fight_won = None
+        self.fight_from_dialogue = False
         self._log = []
 
     def set_interactable(self, character: Character):
@@ -38,7 +38,9 @@ class GameState:
             friend.update_dialogue_trees()
 
     def push_fight_mode(self):
-        self._render_stack.push(self.fight_mode)
+        #fight mode needs to be created each time to reset the fight
+        new_fight_mode = FightMode()
+        self._render_stack.push(new_fight_mode)
 
     def push_new_explore_mode(self):
         self._render_stack.push(self.explore_mode)

@@ -1,6 +1,7 @@
 BUGS:
+After fight with basic enemy, can't talk with friendly
 When the first line in dialogue is too short, the text gets skipped
-fight with friendly does not work
+DONE fight with friendly does not work
 
 FEATURES:
 DONE prevent player from moving while dialogue or fight is active

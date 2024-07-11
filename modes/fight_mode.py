@@ -17,6 +17,7 @@ class FightMode(GameMode, Cursor):
             return
 
         if not game_state.player.is_alive():
+            #todo what actually happens if a player is dead?
             self.handle_loss(game_state)
             return
         if not game_state.get_interactable().is_alive():
@@ -44,14 +45,16 @@ class FightMode(GameMode, Cursor):
         draw_text("You lose!", 400, 240, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
-            game_state.last_fight_won = False
+            if game_state.fight_from_dialogue:
+                game_state.last_fight_won = False
 
     def handle_win(self, game_state):
         draw_rectangle(0, 0, 800, 480, WHITE)
         draw_text("You win!", 400, 240, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
-            game_state.last_fight_won = True
+            if game_state.fight_from_dialogue:
+                game_state.last_fight_won = True
 
     def handle_end_of_fight(self, game_state):
         player = game_state.player

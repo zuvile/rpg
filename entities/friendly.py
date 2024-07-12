@@ -1,28 +1,28 @@
 from entities.character import Character
-from entities.rectangle import Rectangle
 from dialogue.dialogue import Dialogue
-import random
 import pyray as rl
 from entities.character_elements import draw_health_bar
 
 class Friendly(Character):
-    def __init__(self, name, portrait, x=0, y=0, attack=10, ac=5, hp=30, magic=1, mana=10):
-        texture = 'assets/rogues.png'
-        sub_texture = Rectangle(32, 128, 32, 32)
+    def __init__(self, name, portrait, deck, texture, sub_texture, x=0, y=0, ac=5, hp=30):
         self.portrait = portrait
         self.name = name
         scale = 1
         self.dialogue_trees = []
         self.rel = 0
-        self.attack = attack
         self.ac = ac
         self.hp = hp
-        self.magic = magic
-        self.mana = mana
         self.is_attacking = False
         self.animation_start_time = 0
+        self.move_speed = 1.0
+        self.last_move_time = 0
+        self.path_index = 0
+        self.is_walking = False
+        self.path = []
+        self.move_animation_start_time = 0
+        self.attack_animation_start_time = 0
 
-        super().__init__(texture, sub_texture, scale, x, y, attack, ac, hp, magic, mana)
+        super().__init__(texture, sub_texture, scale, deck, x, y, 32, ac, hp)
 
     def update_dialogue_trees(self):
         dialogue = Dialogue()
@@ -39,15 +39,32 @@ class Friendly(Character):
         self.is_attacking = True
         self.animation_start_time = rl.get_time()
 
-        return random.randint(0, self.attack)
-
     def draw(self, color=rl.WHITE):
         if self.is_in_fight:
             draw_health_bar(rl.RED, self)
+
+        draw_color = rl.WHITE
+
         if self.is_attacking:
             draw_color = rl.RED
-            if rl.get_time() - self.animation_start_time > 1:
+            if rl.get_time() - self.attack_animation_start_time > 1:
                 self.is_attacking = False
-        else:
-            draw_color = rl.WHITE
+                draw_color = rl.WHITE
+        if self.is_walking and rl.get_time() - self.last_move_time >= self.move_speed:
+            draw_color = rl.BLUE
+            if self.path_index < len(self.path):
+                next_pos = self.path[self.path_index]
+                self.rec.x = next_pos[0] * 32
+                self.rec.y = next_pos[1] * 32
+                self.path_index += 1
+                self.last_move_time = rl.get_time()
+            else:
+                self.is_walking = False
         super().draw(draw_color)
+
+    def auto_move(self, path):
+        self.is_walking = True
+        self.path_index = 0
+        self.move_animation_start_time = rl.get_time()
+        self.last_move_time = rl.get_time()
+        self.path = path

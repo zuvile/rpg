@@ -3,9 +3,7 @@ from entities.rectangle import Rectangle
 from entities.player_deck import PlayerDeck
 from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
-import random
 from entities.character_elements import draw_health_bar
-from entities.character import CharacterType
 
 class Player(Character):
     def __init__(self, x=0, y=0):
@@ -18,6 +16,7 @@ class Player(Character):
         self.magic = 1
         self.mana = 10
         self.dead = False
+        #todo player deck is diffrent from normal decks, what do?
         self.deck = PlayerDeck()
         self.is_healing = False
         self.is_attacking = False
@@ -29,9 +28,8 @@ class Player(Character):
         self.path_index = 0
         self.is_walking = False
         self.path = []
-        self.type = CharacterType.PLAYER
 
-        super().__init__(texture, sub_texture, scale, x, y, 62, self.attack, self.ac, self.hp, self.magic, self.mana)
+        super().__init__(texture, sub_texture, scale, self.deck, x, y, 62, 5, 32)
 
     def move(self, game_state):
         if rl.is_key_down(rl.KEY_W):

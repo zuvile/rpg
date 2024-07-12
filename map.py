@@ -2,7 +2,7 @@ from entities.enemies.monster_melee import MonsterMelee
 from entities.friendly import Friendly
 from entities.wall import Wall
 from entities.rectangle import Rectangle
-
+from characters.create_characters import create_characters
 class Map():
     def __init__(self):
         self.enemies = []
@@ -27,9 +27,9 @@ class Map():
             y += 1
 
     def add_friends(self):
-        self.friends.append(Friendly('Cassius', 'assets/portraits/cassius_normal.png',  3 * 32, 6 * 32, 100, 100, 100, 100, 100))
-        self.friends.append(Friendly('Mother', 'assets/portraits/placeholder.png', -1 * 32, -1 * 32))
-        self.friends.append(Friendly('Master', 'assets/portraits/placeholder.png', -1 * 32, -1 * 32))
+        chars = create_characters()
+        for char in chars:
+            self.friends.append(char)
 
     def add_enemies(self):
         self.enemies.append(MonsterMelee(5 * 32, 5 * 32))

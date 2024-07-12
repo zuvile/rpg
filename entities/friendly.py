@@ -4,7 +4,7 @@ import pyray as rl
 from entities.character_elements import draw_health_bar
 
 class Friendly(Character):
-    def __init__(self, name, portrait, deck, texture, sub_texture, x=0, y=0, ac=5, hp=30):
+    def __init__(self, name, portrait, deck, texture, sub_texture, current_map, x=0, y=0, ac=5, hp=30):
         self.portrait = portrait
         self.name = name
         scale = 1
@@ -21,12 +21,13 @@ class Friendly(Character):
         self.path = []
         self.move_animation_start_time = 0
         self.attack_animation_start_time = 0
+        self.current_map = current_map
 
-        super().__init__(texture, sub_texture, scale, deck, x, y, 32, ac, hp)
+        super().__init__(texture, sub_texture, scale, deck, current_map, x, y, 32, ac, hp)
 
-    def update_dialogue_trees(self):
+    def update_dialogue_trees(self, file_path):
         dialogue = Dialogue()
-        trees = dialogue.load_dialogue_trees('dialogue_files/cassius_dialogues.txt')
+        trees = dialogue.load_dialogue_trees(file_path)
         self.dialogue_trees = trees
 
     def in_animation(self):

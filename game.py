@@ -17,6 +17,7 @@ while not window_should_close():
     begin_drawing()
 
     if game_state is not None:
+        game_state.update()
         game_state.render()
 
     if action == Actions.INITIAL_MENU:

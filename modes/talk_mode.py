@@ -18,6 +18,7 @@ class TalkMode(GameMode, Cursor):
         self.showing_heart = False
         self.heart_animation_start_time = 0
         self.liked_choice = False
+        self.background = None
 
     def set_dialogue_trees(self, trees):
         if not self.trees:
@@ -88,7 +89,7 @@ class TalkMode(GameMode, Cursor):
             rel_mods = self.tree.children[self.cursor_index].rel_mods
             # there's a better way to do this
             for key, value in rel_mods.items():
-                for friend in game_state.map.friends:
+                for friend in game_state.current_map.friends:
                     if friend.name == key:
                         self.showing_heart = True
                         self.heart_animation_start_time = get_time()
@@ -128,7 +129,7 @@ class TalkMode(GameMode, Cursor):
 
     def set_interactable(self, game_state, tree):
         speaker = tree.speaker
-        for friend in game_state.map.friends:
+        for friend in game_state.current_map.friends:
             if friend.name.lower() == speaker.lower():
                 self.current_interactable = friend
                 return
@@ -153,9 +154,11 @@ class TalkMode(GameMode, Cursor):
             game_state.pop_render_layer()
 
     def draw_scene(self):
+        if self.background is not None:
+            draw_texture(textures.id_to_raylib(self.background), 0, 0, WHITE)
         if self.tree.render is not None:
-            texture = load_texture('assets/backgrounds/' + self.tree.render)
-            draw_texture(texture, 0, 0, WHITE)
+            id = textures.load_texture('assets/backgrounds/' + self.tree.render)
+            self.background = id
 
         draw_rectangle(0, 352, 800, 128, BLACK)
 

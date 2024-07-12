@@ -8,7 +8,7 @@ class Entity:
         self.rec = Rectangle(x, y, size, size)
 
     def can_move(self, dx, dy, game_state):
-        if (off_the_window(self, dx, dy, game_state.map)
+        if (off_the_window(self, dx, dy, game_state.current_map)
                 or blocked_by_object(self, game_state, dx, dy)):
             return False
         return True

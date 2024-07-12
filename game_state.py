@@ -6,15 +6,16 @@ from modes.dialogue_mode import DialogueMode
 from modes.fight_mode import FightMode
 from modes.story_mode import StoryMode
 from modes.explore_mode import ExploreMode
+from maps.map import MapType
+from scenarios.load_scenario import load_scenario
 
 
 class GameState:
-    def __init__(self, map, player):
-        self.map = map
+    def __init__(self, player, maps, characters):
         self.player = player
         self.interacting_with: Optional[Character] = None
         self.dialogue = Dialogue()
-        self.day = 0
+        self.day = -1
         self._render_stack = RenderStack(self)
         self.dialogue_mode = DialogueMode()
         self.story_mode = StoryMode()
@@ -22,6 +23,10 @@ class GameState:
         self.last_fight_won = None
         self.fight_from_dialogue = False
         self._log = []
+        self._maps = maps
+        self.characters = characters
+        self.current_map = self._maps[MapType.CASTLE_GROUNDS]
+
 
     def set_interactable(self, character: Character):
         self.interacting_with = character
@@ -34,8 +39,7 @@ class GameState:
 
     def advance_day(self):
         self.day += 1
-        for friend in self.map.friends:
-            friend.update_dialogue_trees()
+        load_scenario(self)
 
     def push_fight_mode(self):
         #fight mode needs to be created each time to reset the fight
@@ -67,3 +71,7 @@ class GameState:
 
     def get_log(self):
         return self._log[-5:][::-1]
+
+    def update(self):
+        self.current_map.update(self.characters)
+

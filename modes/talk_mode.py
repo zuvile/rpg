@@ -38,7 +38,7 @@ class TalkMode(GameMode, Cursor):
             first_key = next(iter(self.trees))
             self.del_keys.append(first_key)
             self.tree = self.trees[first_key]
-        self.draw_scene()
+        self.draw_scene(game_state)
         idx = self.write_text(game_state)
         if self.current_interactable is not None:
             self.draw_portrait()
@@ -153,12 +153,19 @@ class TalkMode(GameMode, Cursor):
         if is_key_pressed(KEY_ENTER):
             game_state.pop_render_layer()
 
-    def draw_scene(self):
+    def draw_scene(self, game_state):
         if self.background is not None:
             draw_texture(textures.id_to_raylib(self.background), 0, 0, WHITE)
-        if self.tree.render is not None:
-            id = textures.load_texture('assets/backgrounds/' + self.tree.render)
-            self.background = id
+        if self.tree.setup is not None:
+            if self.tree.setup.render is not None:
+                id = textures.load_texture('assets/backgrounds/' + self.tree.setup.render)
+                self.background = id
+            if self.tree.setup.stop_music:
+                game_state.play_music(None)
+            elif self.tree.setup.music is not None and game_state.music != self.tree.setup.music:
+                game_state.play_music(self.tree.setup.music)
+            if self.tree.setup.sound is not None:
+                game_state.play_sound(self.tree.setup.sound)
 
         draw_rectangle(0, 352, 800, 128, BLACK)
 

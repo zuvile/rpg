@@ -30,7 +30,7 @@ def get_cassius():
 
     ]
 
-    portrait = 'assets/portraits/cassius_normal.png'
+    portrait = 'assets/portraits/cassius.png'
     texture = 'assets/rogues.png'
     sub_texture = Rectangle(32, 128, 32, 32)
     cassius = Friendly('Cassius', portrait, deck, texture, sub_texture, MapType.CASTLE_GROUNDS, 3 * 32, 6 * 32, 100,100)
@@ -80,7 +80,7 @@ def get_master():
                     100)
 
 def get_mom():
-    portrait = 'assets/portraits/placeholder.png'
+    portrait = 'assets/portraits/mother.png'
     texture = 'assets/rogues.png'
     sub_texture = Rectangle(0, 128, 32, 32)
     return Friendly('Mother', portrait, [], texture, sub_texture, MapType.CASTLE_GROUNDS, 4 * 32, 8 * 32, 100,

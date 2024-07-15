@@ -16,10 +16,19 @@ class DialogueTree:
         self.parent = None
         self.rel_mods = {}
         self.jmp = None
-        self.render = None
+        self.setup = None
         self.init_fight = False
         self.auto_choice = False
+        self.music = None
+        self.sound = None
+        self.stop_sound = False
 
+class SceneSetup:
+    def __init__(self):
+        self.sound = None
+        self.music = None
+        self.render = None
+        self.stop_music = False
 
 class Dialogue:
     def load_dialogue_trees(self, file_name):
@@ -51,8 +60,8 @@ class Dialogue:
             return self.handle_jmp(idx, lines, prev, root, line, choice_root)
         if re.match("(->.*)", line.strip()):
             return self.handle_choice(idx, lines, prev, root, line, choice_root)
-        if re.match("(\\$render=.*)", line):
-            return self.handle_render(idx, lines, prev, root, line, choice_root)
+        if re.match("(\\$setup.*)", line):
+            return self.handle_setup(idx, lines, prev, root, line, choice_root)
         return self.create_tree(idx + 1, lines, prev, root, choice_root)
 
     def handle_init_fight(self, idx, lines, prev, root, line, choice_root):
@@ -119,6 +128,29 @@ class Dialogue:
         new_node.parent = choice_root
         return self.create_tree(idx + 1, lines, new_node, root, choice_root)
 
-    def handle_render(self, idx, lines, prev, root, line, choice_root):
-        prev.render = line.split('=')[1]
+    def handle_setup(self, idx, lines, prev, root, line, choice_root):
+        setup_string = line
+        setup_string = setup_string.replace("$setup(", "").replace(")", "")
+        settings = setup_string.split(", ")
+        setup = SceneSetup()
+        for setting in settings:
+            if setting.startswith("$render"):
+                setup.render = setting.split('=')[1]
+            elif setting.startswith("$music"):
+                setup.music = setting.split('=')[1]
+                if setup.music == "STOP":
+                    setup.stop_music = True
+            elif setting.startswith("$sound"):
+                sound = setting.split('=')[1]
+                setup.sound = sound
+
+        prev.setup = setup
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
+
+    def handle_music(self, idx, lines, prev, root, line, choice_root):
+        prev.music = line.split('=')[1]
+        return self.create_tree(idx + 1, lines, prev, root, choice_root)
+
+    def handle_sound(self, idx, lines, prev, root, line, choice_root):
+        prev.sound = line.split('=')[1]
         return self.create_tree(idx + 1, lines, prev, root, choice_root)

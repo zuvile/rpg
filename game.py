@@ -5,6 +5,7 @@ from util.save import Save
 
 
 init_window(800, 480, "Game")
+init_audio_device()
 set_target_fps(60)
 action = Actions.INITIAL_MENU
 prev_action = None

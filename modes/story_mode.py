@@ -22,4 +22,4 @@ class StoryMode(TalkMode):
         dialogue = Dialogue()
         # todo cache
         if day == 0:
-            return dialogue.load_dialogue_trees('dialogue_files/dialogue_intro_testing.txt')
+            return dialogue.load_dialogue_trees('dialogue_files/dialogue_intro.txt')

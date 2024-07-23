@@ -49,6 +49,7 @@ class PlayerTurn(Cursor):
 
     def handle_attacking(self):
         self.player.do_attack()
+        self.game_state.play_sound("slash.wav")
         pts = self.current_card.get_damage()
         self.enemy.apply_damage(pts)
         self.card_played = True
@@ -57,12 +58,14 @@ class PlayerTurn(Cursor):
 
     def handle_healing(self):
         self.handle_cancel()
+        self.game_state.play_sound("heal.wav")
         self.player.heal(self.current_card.get_heal())
         self.card_played = True
         self.game_state.add_to_log("You healed:" + str(self.current_card.get_heal()) + " HP")
         self.current_card = None
 
     def handle_buffing(self):
+        self.game_state.play_sound("buff.wav")
         self.player.deck.buff_all_cards(self.current_card)
         self.card_played = True
         self.game_state.add_to_log("Buffed: " + str(self.current_card.buff))

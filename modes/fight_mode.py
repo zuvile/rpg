@@ -44,8 +44,7 @@ class FightMode(GameMode, Cursor):
 
     def handle_loss(self, game_state):
         draw_rectangle(0, 0, 1000, 600, WHITE)
-        # Centering "You lose!" text
-        draw_text("You lose!", 460, 300, 32, BLACK)  # Adjusted x-coordinate for centering
+        draw_text("You lose!", 460, 300, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
             if game_state.fight_from_dialogue:
@@ -53,8 +52,7 @@ class FightMode(GameMode, Cursor):
 
     def handle_win(self, game_state):
         draw_rectangle(0, 0, 1000, 600, WHITE)
-        # Centering "You win!" text
-        draw_text("You win!", 460, 300, 32, BLACK)  # Adjusted x-coordinate for centering
+        draw_text("You win!", 460, 300, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
             if game_state.fight_from_dialogue:

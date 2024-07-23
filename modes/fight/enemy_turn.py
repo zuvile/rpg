@@ -44,6 +44,7 @@ class EnemyTurn:
         if self.current_card is None:
             self.current_card = pick_card(self.enemy.deck, self.enemy.rec, self.player.rec)
             self.card_in_animation = True
+            self.game_state.play_sound("play_card.wav")
             self.card_animation_start_time = get_time()
         elif not self.card_in_animation:
             self.action_handlers[self.current_card.type]()
@@ -55,6 +56,7 @@ class EnemyTurn:
 
     def handle_attacking(self):
         self.enemy.do_attack()
+        self.game_state.play_sound("claw.wav")
         pts = self.current_card.get_damage()
         self.player.apply_damage(pts)
         self.game_state.add_to_log("Enemy did " + str(pts) + " DMG")

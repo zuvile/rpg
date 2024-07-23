@@ -7,10 +7,10 @@ class PlayerDeck:
         self.is_flashing = False
         self.flash_duration = 0
         self.cards = [
-            Card('Strike', CardType.ATTACK, 10, 0, 2, 0),
-            Card('Strike', CardType.ATTACK, 10, 0, 2, 0),
-            Card('Heal', CardType.HEAL, 0, 10, 0, 0),
-            Card('Buff', CardType.BUFF, 0, 0, 0, 1),
+            Card('Strike', CardType.ATTACK, 10, 0, 2),
+            Card('Strike', CardType.ATTACK, 10, 0, 2),
+            Card('Heal', CardType.HEAL, 0, 10, 0,),
+            Card('Buff', CardType.BUFF, 0, 0, 0),
         ]
 
     def buff_all_cards(self, buff_card):

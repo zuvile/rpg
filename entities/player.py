@@ -14,6 +14,7 @@ class Player(Character):
         self.attack = 10
         self.ac = 5
         self.hp = 100
+        self.max_hp = 100
         self.magic = 1
         self.mana = 10
         self.dead = False
@@ -24,7 +25,7 @@ class Player(Character):
         self.path_index = 0
         self.path = []
 
-        super().__init__(texture, sub_texture, scale, self.deck, x, y, 62, 5, 32)
+        super().__init__(texture, sub_texture, scale, self.deck, x, y, self.hp, 32)
 
     def move(self, game_state):
         if rl.is_key_down(rl.KEY_W):
@@ -55,7 +56,11 @@ class Player(Character):
     def increase_magic_skill(self, modifier):
         self.magic += modifier
 
+    def move_towards_enemy(self):
+        self.rec.x = self.rec.x + 96
 
+    def move_away_from_enemy(self):
+        self.rec.x = self.rec.x - 96
 
     def __repr__(self):
         return f"Player({self.rec.x}, {self.rec.y})"

@@ -4,11 +4,9 @@ from util import textures as t
 from maps.map import MapType
 import math
 
-
 class Character(Entity):
-    def __init__(self, texture, sub_texture, scale, deck, current_map, x=0, y=0, size=32, ac=5, hp=10):
+    def __init__(self, texture, sub_texture, scale, deck, current_map, hp, x, y, size=32):
         super().__init__(x, y, size)
-        self.ac = ac
         self.hp = hp
         self.dead = False
         self.texture = texture
@@ -61,9 +59,9 @@ class Character(Entity):
                     self.is_healing = False
                     draw_color = rl.WHITE
             if self.is_attacking:
-                draw_color = rl.RED
                 if rl.get_time() - self.attack_animation_start_time > 1:
                     self.is_attacking = False
+                    self.move_away_from_enemy()
                     draw_color = rl.WHITE
                     t.load_texture(self.texture)
         texture = t.id_to_raylib(self.texture)
@@ -93,7 +91,14 @@ class Character(Entity):
 
     def do_attack(self):
         self.is_attacking = True
+        self.move_towards_enemy()
         self.attack_animation_start_time = rl.get_time()
 
     def __repr__(self):
         return f"Character({self.rec.x}, {self.rec.y})"
+
+    def move_towards_enemy(self):
+        self.rec.x = self.rec.x - 96
+
+    def move_away_from_enemy(self):
+        self.rec.x = self.rec.x + 96

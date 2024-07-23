@@ -1,14 +1,14 @@
 from entities.character import Character
 from dialogue.dialogue import Dialogue
 
+
 class Friendly(Character):
-    def __init__(self, name, portrait, deck, texture, sub_texture, current_map, x=0, y=0, ac=5, hp=30):
+    def __init__(self, name, portrait, deck, texture, sub_texture, current_map, hp, x, y):
         self.portrait = portrait
         self.name = name
         scale = 1
         self.dialogue_trees = []
         self.rel = 0
-        self.ac = ac
         self.hp = hp
         self.is_attacking = False
         self.animation_start_time = 0
@@ -21,7 +21,7 @@ class Friendly(Character):
         self.attack_animation_start_time = 0
         self.current_map = current_map
 
-        super().__init__(texture, sub_texture, scale, deck, current_map, x, y, 32, ac, hp)
+        super().__init__(texture, sub_texture, scale, deck, current_map, hp, x, y)
 
     def update_dialogue_trees(self, file_path):
         dialogue = Dialogue()

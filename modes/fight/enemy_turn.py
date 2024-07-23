@@ -45,7 +45,7 @@ class EnemyTurn:
             self.current_card = pick_card(self.enemy.deck, self.enemy.rec, self.player.rec)
             self.card_in_animation = True
             self.card_animation_start_time = get_time()
-        elif (get_time() - self.card_animation_start_time) > 2:
+        elif not self.card_in_animation:
             self.action_handlers[self.current_card.type]()
 
     def exit_state(self):
@@ -81,7 +81,7 @@ class EnemyTurn:
         draw_text(card.name, 480, 64, 20, BLACK)
         draw_text(card.get_description(), 480, 96, 12, BLACK)
 
-        if get_time() - self.card_animation_start_time > 2:
+        if get_time() - self.card_animation_start_time > 1:
             self.card_in_animation = False
             self.card_animation_start_time = 0
 

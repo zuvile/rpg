@@ -45,7 +45,6 @@ class PlayerTurn(Cursor):
             return
         if self.current_card is None:
             self.move_cursor_horizontal(len(self.player.deck.cards))
-            self.draw_selected_card()
             self.play_card()
         else:
             self.action_handlers[self.current_card.type]()
@@ -105,12 +104,6 @@ class PlayerTurn(Cursor):
     def exit_state(self):
         self.card_played = False
         self.done = False
-
-    def draw_selected_card(self):
-        curr_card = self.player.deck.cards[self.cursor_index]
-        draw_rectangle(19 * 32, 10 * 32, 128, 192, GRAY)
-        draw_text(curr_card.name, 20 * 32, 10 * 32, 20, BLACK)
-        draw_text(curr_card.get_description(), 19 * 32, 11 * 32, 16, BLACK)
 
     def handle_cancel(self):
         if is_key_pressed(KEY_ESCAPE):

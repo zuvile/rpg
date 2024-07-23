@@ -18,10 +18,7 @@ class CastleGrounds(Map):
 
     def update(self, characters):
         self.clear_dead()
-        self.friends = []
-        for char in characters:
-            if char.current_map == self.type:
-                self.friends.append(char)
+        self.friends = [char for char in characters if char.current_map == self.type]
 
     def add_walls(self):
         y = 0
@@ -38,6 +35,4 @@ class CastleGrounds(Map):
         self.enemies.append(MonsterMelee(5 * 32, 5 * 32))
 
     def clear_dead(self):
-        for enemy in self.enemies:
-            if not enemy.is_alive():
-                self.enemies.remove(enemy)
+        self.enemies = [enemy for enemy in self.enemies if enemy.is_alive()]

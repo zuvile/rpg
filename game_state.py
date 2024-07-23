@@ -9,6 +9,7 @@ from modes.explore_mode import ExploreMode
 from maps.map import MapType
 from scenarios.load_scenario import load_scenario
 from pyray import *
+from util.camera import Camera
 
 
 
@@ -33,6 +34,7 @@ class GameState:
         self.stop_music = False
         self.music_stream = None
         self.sound = None
+        self.camera = Camera()
 
 
     def set_interactable(self, character: Character):

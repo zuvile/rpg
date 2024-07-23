@@ -100,3 +100,6 @@ class Player(Character):
     def do_attack(self):
         self.is_attacking = True
         self.attack_animation_start_time = rl.get_time()
+
+    def __repr__(self):
+        return f"Player({self.rec.x}, {self.rec.y})"

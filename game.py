@@ -4,7 +4,7 @@ from actions import Actions
 from util.save import Save
 
 
-init_window(800, 480, "Game")
+init_window(1000, 600, "Game")
 init_audio_device()
 set_target_fps(60)
 action = Actions.INITIAL_MENU

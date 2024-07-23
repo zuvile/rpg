@@ -76,12 +76,12 @@ class TalkMode(GameMode, Cursor):
 
     def write_choices(self):
         self.done_reading = False
-        y = 13 * 32
+        y = 13 * 40  # Adjusted for new window height
         idx = 0
         for choices in self.tree.children:
             color = GREEN if idx == self.cursor_index else WHITE
-            draw_text(choices.text, 2 * 32, y, 15, color)
-            y += 32
+            draw_text(choices.text, 2 * 40, y, 15, color)  # Adjusted X position
+            y += 40  # Increased spacing for choices
             idx += 1
 
     def make_choice(self, game_state):
@@ -119,10 +119,10 @@ class TalkMode(GameMode, Cursor):
         else:
             self.done_reading = False
         if self.current_interactable is not None:
-            draw_text(self.current_interactable.name.upper(), 2 * 32, 12 * 32, 15, SKYBLUE)
+            draw_text(self.current_interactable.name.upper(), 2 * 40, 12 * 40, 15, SKYBLUE)
         else:
-            draw_text("ME", 2 * 32, 12 * 32, 15, SKYBLUE)
-        draw_text(pages[self.curr_page], 2 * 32, 13 * 32, 15, WHITE)
+            draw_text("ME", 2 * 40, 12 * 40, 15, SKYBLUE)
+        draw_text(pages[self.curr_page], 2 * 40, 13 * 40, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
             self.curr_page += 1
         return 0
@@ -139,17 +139,19 @@ class TalkMode(GameMode, Cursor):
     def draw_portrait(self):
         origin = Vector2(0, 0)
         sub_texture = Rectangle(0, 0, 64, 64)
-        scale = 3
+        scale = 4
         portrait_width = sub_texture.width * scale
-        x = get_screen_width() - portrait_width
-        destination = Rectangle(x, 300, sub_texture.width * scale, sub_texture.height * scale)
+        x = get_screen_width() - portrait_width - 32
+        y = 32 * 11
+        destination = Rectangle(x, y, sub_texture.width * scale, sub_texture.height * scale)
         textures.load_texture(self.current_interactable.portrait)
         portrait_texture = textures.id_to_raylib(self.current_interactable.portrait)
         draw_texture_pro(portrait_texture, sub_texture, destination, origin, 0, WHITE)
 
+
     def write_nothing_say(self, game_state):
-        draw_rectangle(0, 352, 800, 128, BLACK)
-        draw_text("There's nothing to talk about now", 2 * 32, 13 * 32, 15, WHITE)
+        draw_rectangle(0, 472, 1000, 128, BLACK)
+        draw_text("There's nothing to talk about now", 2 * 40, 13 * 40, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
             game_state.pop_render_layer()
 
@@ -167,7 +169,7 @@ class TalkMode(GameMode, Cursor):
             if self.tree.setup.sound is not None:
                 game_state.play_sound(self.tree.setup.sound)
 
-        draw_rectangle(0, 352, 800, 128, BLACK)
+        draw_rectangle(0, 472, 1000, 128, BLACK)
 
     def draw_text_with_border(self, text, x, y, font_size, text_color, border_color):
         offsets = [(-1, -1), (-1, 1), (1, -1), (1, 1), (-1, 0), (1, 0), (0, -1), (0, 1)]

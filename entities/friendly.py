@@ -54,9 +54,9 @@ class Friendly(Character):
         if self.is_walking and rl.get_time() - self.last_move_time >= self.move_speed:
             draw_color = rl.BLUE
             if self.path_index < len(self.path):
-                next_pos = self.path[self.path_index]
-                self.rec.x = next_pos[0] * 32
-                self.rec.y = next_pos[1] * 32
+                next_pos_x, next_pos_y = self.path[self.path_index]
+                self.rec.x = next_pos_x * 32
+                self.rec.y = next_pos_y * 32
                 self.path_index += 1
                 self.last_move_time = rl.get_time()
             else:

@@ -101,7 +101,8 @@ class Grid(Cursor):
                 min_distance = distance
                 closest = neighbour
         if closest is not None:
-            return Vector2(closest[0] * 32, closest[1] * 32)
+            closest_x, closest_y = closest
+            return Vector2(closest_x * 32, closest_y * 32)
         else:
             return None
 

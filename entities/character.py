@@ -3,7 +3,6 @@ import pyray as rl
 from util import textures as t
 from maps.map import MapType
 import math
-from entities.rectangle import Rectangle
 
 
 class Character(Entity):
@@ -95,3 +94,6 @@ class Character(Entity):
     def do_attack(self):
         self.is_attacking = True
         self.attack_animation_start_time = rl.get_time()
+
+    def __repr__(self):
+        return f"Character({self.rec.x}, {self.rec.y})"

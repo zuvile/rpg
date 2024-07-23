@@ -32,7 +32,7 @@ class CastleGrounds(Map):
             y += 1
 
     def add_enemies(self):
-        self.enemies.append(MonsterMelee(5 * 32, 5 * 32))
+        self.enemies.append(MonsterMelee(self, 8 * 32, 8 * 32))
 
     def clear_dead(self):
         self.enemies = [enemy for enemy in self.enemies if enemy.is_alive()]

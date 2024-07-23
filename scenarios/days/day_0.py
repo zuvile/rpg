@@ -21,5 +21,6 @@ class Day0(DayBase):
         for character in game_state.characters:
             if character.name == "Cassius":
                 character.update_dialogue_trees("dialogue_files/cassius_dialogues.txt")
+
     def load_story(self, game_state):
         pass

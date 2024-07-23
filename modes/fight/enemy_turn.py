@@ -1,7 +1,7 @@
 from entities.card import CardType
 from modes.fight.ai_card_picker import pick_card
 from modes.fight.grid import Grid
-
+from pyray import *
 
 class EnemyTurn:
     def __init__(self):
@@ -14,6 +14,8 @@ class EnemyTurn:
         self.grid = Grid()
         self.has_moved = False
         self.card_played = False
+        self.card_in_animation = False
+        self.card_animation_start_time = 0
 
         self.action_handlers = {
             CardType.ATTACK: self.handle_attacking,
@@ -27,16 +29,23 @@ class EnemyTurn:
         self.game_state = game_state
 
     def draw(self):
-        if self.card_played and not self.enemy.in_animation():
+        if self.card_played and not self.enemy.in_animation() and not self.card_in_animation:
             self.done = True
             return
 
         #wait for animations to finish
         if self.enemy.in_animation():
             return
+
+        if self.card_in_animation:
+            self.draw_enemy_card(self.current_card)
+            return
+
         if self.current_card is None:
             self.current_card = pick_card(self.enemy.deck, self.enemy.rec, self.player.rec)
-        else:
+            self.card_in_animation = True
+            self.card_animation_start_time = get_time()
+        elif (get_time() - self.card_animation_start_time) > 2:
             self.action_handlers[self.current_card.type]()
 
     def exit_state(self):
@@ -52,6 +61,7 @@ class EnemyTurn:
         self.current_card = None
         self.card_played = True
 
+
     def handle_healing(self):
         self.enemy.heal(self.current_card.get_heal())
         self.game_state.add_to_log("Enemy healed:" + str(self.current_card.get_heal()) + " HP")
@@ -64,4 +74,14 @@ class EnemyTurn:
         self.game_state.add_to_log("Enemy Buffed: " + str(self.current_card.buff))
         self.current_card = None
         self.card_played = True
+
+
+    def draw_enemy_card(self, card):
+        draw_rectangle(480, 64, 128, 160, WHITE)
+        draw_text(card.name, 480, 64, 20, BLACK)
+        draw_text(card.get_description(), 480, 96, 12, BLACK)
+
+        if get_time() - self.card_animation_start_time > 2:
+            self.card_in_animation = False
+            self.card_animation_start_time = 0
 

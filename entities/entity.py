@@ -1,6 +1,7 @@
 from entities.rectangle import Rectangle
 from util.collision import off_the_window, blocked_by_object
 
+
 # base class for any object
 class Entity:
     def __init__(self, x, y, size):
@@ -13,7 +14,5 @@ class Entity:
             return False
         return True
 
-
-    def change_position(self,x , y):
+    def change_position(self, x, y):
         self.rec.x, self.rec.y = x, y
-

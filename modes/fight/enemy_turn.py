@@ -18,9 +18,7 @@ class EnemyTurn:
         self.action_handlers = {
             CardType.ATTACK: self.handle_attacking,
             CardType.HEAL: self.handle_healing,
-            CardType.MOVE: self.handle_moving,
             CardType.BUFF: self.handle_buffing,
-            CardType.DASH_AND_SLASH: self.handle_dash_and_slash,
         }
 
     def enter(self, game_state):
@@ -60,33 +58,10 @@ class EnemyTurn:
         self.current_card = None
         self.card_played = True
 
-    def handle_dash_and_slash(self):
-        if self.has_moved:
-            self.enemy.do_attack()
-            pts = self.current_card.get_damage()
-            self.player.apply_damage(pts)
-            self.game_state.add_to_log("Enemy did " + str(pts) + " DMG")
-            self.current_card = None
-            self.has_moved = False
-            self.card_played = True
-        else:
-            #get nearest square to player
-            closest = self.grid.find_closest_to_player(self.player, self.enemy)
-            path = self.grid.find_path(self.enemy, closest)
-            self.enemy.auto_move(path)
-            self.has_moved = True
-
-    def handle_moving(self):
-        closest = self.grid.find_closest_to_player(self.player, self.enemy)
-        path = self.grid.find_path(self.enemy, closest)
-        self.enemy.auto_move(path)
-        self.has_moved = True
-        self.card_played = True
-
     def handle_buffing(self):
-        self.player.deck.buff_all_cards(self.current_card)
+        self.enemy.deck.buff_all_cards(self.current_card)
         self.card_played = True
-        self.game_state.add_to_log("Buffed: " + str(self.current_card.buff))
+        self.game_state.add_to_log("Enemy Buffed: " + str(self.current_card.buff))
         self.current_card = None
         self.card_played = True
 

@@ -12,3 +12,8 @@ class Entity:
                 or blocked_by_object(self, game_state, dx, dy)):
             return False
         return True
+
+
+    def change_position(self,x , y):
+        self.rec.x, self.rec.y = x, y
+

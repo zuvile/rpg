@@ -24,8 +24,7 @@ def get_cassius():
     # kill card that insta kills all enemies with less than 10 hp
     #
     deck = [
-        Card('Super Attack', CardType.ATTACK, 30, 0, 5, 0, False),
-        Card('Dash and slash', CardType.DASH_AND_SLASH, 10, 0, 0, 0, True),
+        Card('Attack', CardType.ATTACK, 30, 0, 5, 0, False),
         # Card('Cull the weak', CardType.ATTACK,
 
     ]

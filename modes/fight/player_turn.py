@@ -18,9 +18,7 @@ class PlayerTurn(Cursor):
         self.action_handlers = {
             CardType.ATTACK: self.handle_attacking,
             CardType.HEAL: self.handle_healing,
-            CardType.MOVE: self.handle_moving,
             CardType.BUFF: self.handle_buffing,
-            CardType.DASH_AND_SLASH: self.handle_dash_and_slash,
         }
 
     def enter(self, game_state):
@@ -49,17 +47,13 @@ class PlayerTurn(Cursor):
         else:
             self.action_handlers[self.current_card.type]()
 
-    #this is not done using a card, fix this
     def handle_attacking(self):
-        cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
-        self.handle_cancel()
-        if cursor_point is not None:
-            self.player.do_attack()
-            pts = self.current_card.get_damage()
-            self.enemy.apply_damage(pts)
-            self.card_played = True
-            self.game_state.add_to_log("You did " + str(pts) + " DMG")
-            self.current_card = None
+        self.player.do_attack()
+        pts = self.current_card.get_damage()
+        self.enemy.apply_damage(pts)
+        self.card_played = True
+        self.game_state.add_to_log("You did " + str(pts) + " DMG")
+        self.current_card = None
 
     def handle_healing(self):
         self.handle_cancel()
@@ -67,33 +61,6 @@ class PlayerTurn(Cursor):
         self.card_played = True
         self.game_state.add_to_log("You healed:" + str(self.current_card.get_heal()) + " HP")
         self.current_card = None
-
-    def handle_dash_and_slash(self):
-        if self.has_moved:
-            self.player.do_attack()
-            pts = self.current_card.get_damage()
-            self.enemy.apply_damage(pts)
-            self.card_played = True
-            self.game_state.add_to_log("You did " + str(pts) + " DMG")
-            self.current_card = None
-            self.has_moved = False
-        else:
-            cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
-            self.handle_cancel()
-            if cursor_point is not None:
-                path = self.grid.find_path(self.player, cursor_point)
-                self.player.auto_move(path)
-                self.has_moved = True
-
-    def handle_moving(self):
-        cursor_point = self.grid.select_square(self.player, self.enemy, self.current_card, self.game_state)
-        self.handle_cancel()
-        if cursor_point is not None:
-            path = self.grid.find_path(self.player, cursor_point)
-            self.player.auto_move(path)
-            self.card_played = True
-            self.current_card = None
-            self.game_state.add_to_log("You moved.")
 
     def handle_buffing(self):
         self.player.deck.buff_all_cards(self.current_card)

@@ -3,7 +3,8 @@ from entities.rectangle import Rectangle
 from entities.player_deck import PlayerDeck
 from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
-from entities.character_elements import draw_health_bar
+
+from util import textures as t
 
 class Player(Character):
     def __init__(self, x=0, y=0):
@@ -18,15 +19,9 @@ class Player(Character):
         self.dead = False
         #todo player deck is diffrent from normal decks, what do?
         self.deck = PlayerDeck()
-        self.is_healing = False
-        self.is_attacking = False
-        self.heal_animation_start_time = 0
-        self.move_animation_start_time = 0
-        self.attack_animation_start_time = 0
         self.move_speed = 1.0
         self.last_move_time = 0
         self.path_index = 0
-        self.is_walking = False
         self.path = []
 
         super().__init__(texture, sub_texture, scale, self.deck, x, y, 62, 5, 32)
@@ -41,46 +36,12 @@ class Player(Character):
         if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, game_state)
 
-    def draw(self, color=rl.WHITE):
-        if self.is_in_fight:
-            draw_health_bar(rl.GREEN, self)
-        draw_color = rl.WHITE
-        if self.is_healing:
-            draw_color = rl.GREEN
-            if rl.get_time() - self.heal_animation_start_time > 1:
-                self.is_healing = False
-                draw_color = rl.WHITE
-        if self.is_walking and rl.get_time() - self.last_move_time >= self.move_speed:
-            if self.path_index < len(self.path):
-                next_pos = self.path[self.path_index]
-                self.rec.x = next_pos[0] * 32  # Assuming each square is 32x32 pixels
-                self.rec.y = next_pos[1] * 32
-                self.path_index += 1
-                self.last_move_time = rl.get_time()
-            else:
-                self.is_walking = False  # Finished walking
-        if self.is_attacking:
-            draw_color = rl.RED
-            if rl.get_time() - self.attack_animation_start_time > 1:
-                self.is_attacking = False
-                draw_color = rl.WHITE
-
-        super().draw(draw_color)
-
     def heal(self, health):
         self.hp += health
         if self.hp > 100:
             self.hp = 100
             self.is_healing = True
             self.heal_animation_start_time = rl.get_time()
-
-    def auto_move(self, path):
-        self.is_walking = True
-        self.path_index = 0
-        self.move_animation_start_time = rl.get_time()
-        self.last_move_time = rl.get_time()
-        self.path = path
-
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
@@ -94,12 +55,7 @@ class Player(Character):
     def increase_magic_skill(self, modifier):
         self.magic += modifier
 
-    def in_animation(self):
-        return self.is_walking or self.is_healing or self.is_attacking
 
-    def do_attack(self):
-        self.is_attacking = True
-        self.attack_animation_start_time = rl.get_time()
 
     def __repr__(self):
         return f"Player({self.rec.x}, {self.rec.y})"

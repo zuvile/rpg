@@ -18,13 +18,13 @@ class FightMode(GameMode, Cursor):
         if not game_state.is_layer_top(self):
             return
 
+        game_state.camera.begin_fight_cam()
         if not game_state.player.is_alive() and self.all_animations_done(game_state):
             self.handle_loss(game_state)
             return
         if not game_state.get_interactable().is_alive() and self.all_animations_done(game_state):
             self.handle_win(game_state)
             return
-
         self.draw_ui(game_state)
         self.draw_characters(game_state)
 
@@ -41,6 +41,8 @@ class FightMode(GameMode, Cursor):
 
         if self.fight_state_manager.current_state_done():
             self.player_turn = not self.player_turn
+
+        end_mode_2d()
 
     def handle_loss(self, game_state):
         draw_rectangle(0, 0, 1000, 600, WHITE)
@@ -87,6 +89,7 @@ class FightMode(GameMode, Cursor):
         enemy = game_state.get_interactable()
         self.old_player_coordinates = copy.copy(player.rec)
         self.old_enemy_coordinates = copy.copy(enemy.rec)
+        game_state.camera.begin()
 
         player.change_position(128, 192)
         enemy.change_position(672, 192)

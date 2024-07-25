@@ -24,6 +24,7 @@ class Player(Character):
         self.last_move_time = 0
         self.path_index = 0
         self.path = []
+        self.is_walking = False
 
         super().__init__(texture, sub_texture, scale, self.deck, x, y, self.hp, 32)
 
@@ -37,6 +38,7 @@ class Player(Character):
         if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, game_state)
 
+
     def heal(self, health):
         self.hp += health
         if self.hp > 100:
@@ -46,6 +48,7 @@ class Player(Character):
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
+            game_state.play_rep_sound("footstep.wav")
             self.rec.x += dx
             self.rec.y += dy
         if should_init_fight(self, game_state):

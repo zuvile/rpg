@@ -97,10 +97,18 @@ class GameState:
             play_sound(self.sound_effect)
         self.sound = sound
 
+    def play_rep_sound(self, sound):
+        if sound is not None and self.sound != sound:
+            self.sound_effect = load_sound('sounds/' + sound)
+        if self.sound_effect is not None and not is_sound_playing(self.sound_effect):
+            play_sound(self.sound_effect)
+        self.sound = sound
+
     def update(self):
         self.current_map.update(self.characters)
         if self.music_stream is not None:
             update_music_stream(self.music_stream)
+        self.camera.update()
         # if self.sound:
         #     update_sound(self.sound)
         # update_sound(self.sound, )

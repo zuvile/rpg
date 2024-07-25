@@ -1,8 +1,7 @@
 from modes.game_mode import GameMode
 from pyray import *
 from actions import *
-from util.textures import load_texture, id_to_raylib
-from util.camera import Camera
+from util.textures import id_to_raylib
 
 class ExploreMode(GameMode):
     def __init__(self):
@@ -12,6 +11,7 @@ class ExploreMode(GameMode):
         texture = game_state.current_map.texture
         raylib_texture = id_to_raylib(texture)
         draw_rectangle(0, 0, 1600, 1600, BLACK)
+
         game_state.camera.begin()
 
         if is_key_pressed(KEY_M):
@@ -30,5 +30,5 @@ class ExploreMode(GameMode):
             friend.draw()
         if game_state.is_layer_top(self):
             player.move(game_state)
-        end_mode_2d()
+        game_state.camera.end()
 

@@ -62,6 +62,7 @@ class EnemyTurn:
         self.game_state.add_to_log("Enemy did " + str(pts) + " DMG")
         self.current_card = None
         self.card_played = True
+        self.game_state.camera.shake()
 
 
     def handle_healing(self):

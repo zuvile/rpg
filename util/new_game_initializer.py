@@ -3,6 +3,7 @@ from maps.castle_grounds import CastleGrounds
 from maps.map import MapType
 from game_state import GameState
 from entities.player import Player
+from util.camera import Camera
 
 
 def create_new_game():
@@ -15,5 +16,6 @@ def create_new_game():
     characters = create_characters()
     game_state = GameState(player, maps, characters)
     game_state.advance_day()
+    game_state.camera = Camera()
 
     return game_state

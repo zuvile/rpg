@@ -1,8 +1,10 @@
 from modes.game_mode import GameMode
 from pyray import *
 from util.cursor import Cursor
+from util.sounds import play_sound
 import copy
 from modes.fight_state_manager import FightStateManager
+from effects.effects import Effects
 
 class FightMode(GameMode, Cursor):
     def __init__(self):
@@ -13,21 +15,21 @@ class FightMode(GameMode, Cursor):
         self.start_of_fight = True
         self.old_player_coordinates = None
         self.old_enemy_coordinates = None
+        self.effects = Effects()
 
     def draw(self, game_state):
         if not game_state.is_layer_top(self):
             return
 
         game_state.camera.begin_fight_cam()
+        self.draw_ui(game_state)
+        self.draw_characters(game_state)
         if not game_state.player.is_alive() and self.all_animations_done(game_state):
             self.handle_loss(game_state)
             return
         if not game_state.get_interactable().is_alive() and self.all_animations_done(game_state):
             self.handle_win(game_state)
             return
-        self.draw_ui(game_state)
-        self.draw_characters(game_state)
-
         if self.start_of_fight:
             self.setup(game_state)
             self.start_of_fight = False
@@ -45,7 +47,9 @@ class FightMode(GameMode, Cursor):
         end_mode_2d()
 
     def handle_loss(self, game_state):
-        draw_rectangle(0, 0, 1000, 600, WHITE)
+        game_state.effect.tint(RED)
+        play_sound('debuff.wav')
+        draw_rectangle(460, 300, 600, 32, WHITE)
         draw_text("You lose!", 460, 300, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)

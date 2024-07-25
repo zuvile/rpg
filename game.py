@@ -13,8 +13,10 @@ initial_menu_mode = InitialMenuMode()
 save = Save()
 set_exit_key(KEY_NULL)
 game_state = None
-
+render_texture = load_render_texture(1000, 600)
 while not window_should_close():
+    begin_texture_mode(render_texture)
+    clear_background(RAYWHITE)
     begin_drawing()
 
     if game_state is not None:
@@ -35,5 +37,13 @@ while not window_should_close():
         game_state = save.load()
     if action == Actions.SAVE_GAME:
         save.save(game_state)
+    end_texture_mode()
+    source_rect = Rectangle(0, 0, render_texture.texture.width, -render_texture.texture.height)
+    dest_rect = Rectangle(0, 0, render_texture.texture.width, render_texture.texture.height)
+    origin = Vector2(0, 0)
+    if game_state is not None:
+        draw_texture_pro(render_texture.texture, source_rect, dest_rect, origin, 0, game_state.effects.get_color())
+    else:
+        draw_texture_pro(render_texture.texture, source_rect, dest_rect, origin, 0, WHITE)
     end_drawing()
 close_window()

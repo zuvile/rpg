@@ -10,7 +10,8 @@ from maps.map import MapType
 from scenarios.load_scenario import load_scenario
 from pyray import *
 from util.camera import Camera
-
+from effects.effects import Effects
+from util.sounds import update_music
 
 
 class GameState:
@@ -29,12 +30,8 @@ class GameState:
         self._maps = maps
         self.characters = characters
         self.current_map = self._maps[MapType.CASTLE_GROUNDS]
-        self.music = None
-        self.sound_effect = None
-        self.stop_music = False
-        self.music_stream = None
-        self.sound = None
         self.camera = Camera()
+        self.effects = Effects()
 
 
     def set_interactable(self, character: Character):
@@ -81,36 +78,16 @@ class GameState:
     def get_log(self):
         return self._log[-5:][::-1]
 
-    def play_music(self, music):
-        if music is None and self.music_stream is not None:
-            stop_music_stream(self.music_stream)
-            unload_music_stream(self.music_stream)
-            self.music_stream = None
-        elif self.music != music:
-            self.music_stream = load_music_stream('sounds/' + music)
-            play_music_stream(self.music_stream)
-        self.music = music
-
-    def play_sound(self, sound):
-        if sound is not None and self.sound != sound:
-            self.sound_effect = load_sound('sounds/' + sound)
-            play_sound(self.sound_effect)
-        self.sound = sound
-
-    def play_rep_sound(self, sound):
-        if sound is not None and self.sound != sound:
-            self.sound_effect = load_sound('sounds/' + sound)
-        if self.sound_effect is not None and not is_sound_playing(self.sound_effect):
-            play_sound(self.sound_effect)
-        self.sound = sound
-
     def update(self):
         self.current_map.update(self.characters)
-        if self.music_stream is not None:
-            update_music_stream(self.music_stream)
+        update_music()
         self.camera.update()
         # if self.sound:
         #     update_sound(self.sound)
         # update_sound(self.sound, )
 
+    def shake_cam(self):
+        self.effects.shake_cam(self.camera)
 
+    def tint(self, colour):
+        self.effects.tint_view(colour)

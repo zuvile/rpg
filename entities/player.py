@@ -3,8 +3,7 @@ from entities.rectangle import Rectangle
 from entities.player_deck import PlayerDeck
 from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
-
-from util import textures as t
+from util.sounds import play_sound
 
 class Player(Character):
     def __init__(self, x=0, y=0):
@@ -48,7 +47,7 @@ class Player(Character):
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
-            game_state.play_rep_sound("footstep.wav")
+            play_sound("footstep.wav")
             self.rec.x += dx
             self.rec.y += dy
         if should_init_fight(self, game_state):

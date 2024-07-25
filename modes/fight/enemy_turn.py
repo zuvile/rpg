@@ -1,7 +1,8 @@
 from entities.card import CardType
 from modes.fight.ai_card_picker import pick_card
 from modes.fight.grid import Grid
-from pyray import *
+import pyray as rl
+from util.sounds import play_sound
 
 class EnemyTurn:
     def __init__(self):
@@ -44,8 +45,8 @@ class EnemyTurn:
         if self.current_card is None:
             self.current_card = pick_card(self.enemy.deck, self.enemy.rec, self.player.rec)
             self.card_in_animation = True
-            self.game_state.play_sound("play_card.wav")
-            self.card_animation_start_time = get_time()
+            play_sound("play_card.wav")
+            self.card_animation_start_time = rl.get_time()
         elif not self.card_in_animation:
             self.action_handlers[self.current_card.type]()
 
@@ -56,13 +57,13 @@ class EnemyTurn:
 
     def handle_attacking(self):
         self.enemy.do_attack()
-        self.game_state.play_sound("claw.wav")
+        play_sound("claw.wav")
         pts = self.current_card.get_damage()
         self.player.apply_damage(pts)
         self.game_state.add_to_log("Enemy did " + str(pts) + " DMG")
         self.current_card = None
         self.card_played = True
-        self.game_state.camera.shake()
+        self.game_state.shake_cam()
 
 
     def handle_healing(self):
@@ -80,11 +81,11 @@ class EnemyTurn:
 
 
     def draw_enemy_card(self, card):
-        draw_rectangle(480, 64, 128, 160, WHITE)
-        draw_text(card.name, 480, 64, 20, BLACK)
-        draw_text(card.get_description(), 480, 96, 12, BLACK)
+        rl.draw_rectangle(480, 64, 128, 160, rl.WHITE)
+        rl.draw_text(card.name, 480, 64, 20, rl.BLACK)
+        rl.draw_text(card.get_description(), 480, 96, 12, rl.BLACK)
 
-        if get_time() - self.card_animation_start_time > 1:
+        if rl.get_time() - self.card_animation_start_time > 1:
             self.card_in_animation = False
             self.card_animation_start_time = 0
 

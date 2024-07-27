@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from util.sounds import stop_sound
 
 class GameMode(ABC):
     @abstractmethod
@@ -8,4 +8,4 @@ class GameMode(ABC):
 
     def exit(self, game_state):
         game_state.camera.reset()
-
+        stop_sound()

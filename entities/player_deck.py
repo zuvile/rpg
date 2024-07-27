@@ -5,6 +5,7 @@ class PlayerDeck:
     def __init__(self):
         self.maximum_hand_size = 6
         self.is_flashing = False
+        self.picked_card = None
         self.flash_duration = 0
         self.cards = [
             Card('Strike', CardType.ATTACK, 10, 0, 2),
@@ -36,20 +37,17 @@ class PlayerDeck:
 
         for index, card in enumerate(self.cards):
             colour = flash_color if self.flash_duration > 0 else RED
+            card.color = colour
             if cursor_index == index:
-                colour = GREEN if self.flash_duration <= 0 else flash_color
-                draw_rectangle(x + 32, y - 32, 128, 160, colour)
-                draw_text(card.name, x + 32, y - 32, 20, BLACK)
-                draw_text(card.get_description(), x + 32, y, 12, BLACK)
+                card.draw(x + 32, y - 32)
             else:
-                draw_rectangle(x + 32, y, 128, 160, colour)
-                draw_text(card.name, x + 32, y, 20, BLACK)
-            if card.tmp_buff != 0:
-                draw_text("+ " + str(card.tmp_buff), x + 32, y + 32, 20, BLACK)
+                card.x, card.y = x + 32,  y
+                card.draw(x + 32,  y)
             x += card_width + spacing
 
     def in_animation(self):
-        return self.is_flashing
+        moving_cards = [card for card in self.cards if card.is_moving]
+        return self.is_flashing or len(moving_cards) > 0
 
     def clear_buffs(self):
         for card in self.cards:

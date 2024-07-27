@@ -47,7 +47,7 @@ class FightMode(GameMode, Cursor):
         end_mode_2d()
 
     def handle_loss(self, game_state):
-        game_state.effect.tint(RED)
+        game_state.tint(RED)
         play_sound('debuff.wav')
         draw_rectangle(460, 300, 600, 32, WHITE)
         draw_text("You lose!", 460, 300, 32, BLACK)

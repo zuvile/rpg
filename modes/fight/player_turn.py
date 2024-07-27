@@ -31,6 +31,8 @@ class PlayerTurn(Cursor):
         card = self.player.deck.cards[self.cursor_index]
         if rl.is_key_pressed(rl.KEY_ENTER):
             self.current_card = card
+            card.play()
+            play_sound("play_card.wav")
 
     def draw(self):
         if self.card_played and not self.player.in_animation() and not self.player.deck.in_animation():

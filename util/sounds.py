@@ -13,8 +13,14 @@ def load_sound(file_name):
 
 
 def play_sound(file_name):
+    global curr_sound
+
+    if curr_sound is not None and rl.is_sound_playing(curr_sound):
+        return
+
     file_name = 'sounds/' + file_name
     sound = load_sound(file_name)
+    curr_sound = sound
     rl.play_sound(sound)
 
 
@@ -30,6 +36,10 @@ def stop_music():
     if music_stream is not None:
         rl.stop_music_stream(music_stream)
         music_stream = None
+def stop_sound():
+    global curr_sound
+    if curr_sound is not None:
+        rl.stop_sound(curr_sound)
 
 def update_music():
     global music_stream

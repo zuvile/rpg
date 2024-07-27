@@ -47,7 +47,7 @@ class Player(Character):
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
-            play_sound("footstep.wav")
+            play_sound("footstep.mp3")
             self.rec.x += dx
             self.rec.y += dy
         if should_init_fight(self, game_state):

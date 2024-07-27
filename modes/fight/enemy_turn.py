@@ -22,6 +22,7 @@ class EnemyTurn:
             CardType.ATTACK: self.handle_attacking,
             CardType.HEAL: self.handle_healing,
             CardType.BUFF: self.handle_buffing,
+            CardType.ADD_TO_ENEMY_PILE: self.add_to_player_pile
         }
 
     def enter(self, game_state):
@@ -49,6 +50,8 @@ class EnemyTurn:
             self.card_animation_start_time = rl.get_time()
         elif not self.card_in_animation:
             self.action_handlers[self.current_card.type]()
+            self.current_card = None
+            self.card_played = True
 
     def exit_state(self):
         self.card_played = False
@@ -61,23 +64,20 @@ class EnemyTurn:
         pts = self.current_card.get_damage()
         self.player.apply_damage(pts)
         self.game_state.add_to_log("Enemy did " + str(pts) + " DMG")
-        self.current_card = None
-        self.card_played = True
         self.game_state.shake_cam()
 
+    def add_to_player_pile(self):
+        cards = [self.current_card.card for _ in range(3)]
+        self.player.deck.add_to_pile(cards)
 
     def handle_healing(self):
         self.enemy.heal(self.current_card.get_heal())
         self.game_state.add_to_log("Enemy healed:" + str(self.current_card.get_heal()) + " HP")
-        self.current_card = None
-        self.card_played = True
 
     def handle_buffing(self):
         self.enemy.deck.buff_all_cards(self.current_card)
         self.card_played = True
         self.game_state.add_to_log("Enemy Buffed: " + str(self.current_card.buff))
-        self.current_card = None
-        self.card_played = True
 
 
     def draw_enemy_card(self, card):

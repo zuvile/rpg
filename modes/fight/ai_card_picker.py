@@ -5,7 +5,10 @@ from entities.card import CardType
 def pick_card(deck, attacker_pos, defender_pos):
     best_card = None
 
+    #tmp for testing purposes
     for card in deck:
+        if card.type == CardType.ADD_TO_ENEMY_PILE:
+            return card
         if card.type == CardType.ATTACK:
             if best_card is None:
                 best_card = card

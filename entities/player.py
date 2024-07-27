@@ -45,6 +45,11 @@ class Player(Character):
             self.is_healing = True
             self.heal_animation_start_time = rl.get_time()
 
+    def decrease_health(self, health):
+        self.hp -= health
+        if self.hp <= 0:
+            self.dead = True
+
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
             play_sound("footstep.mp3")

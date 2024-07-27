@@ -19,6 +19,7 @@ class PlayerTurn(Cursor):
             CardType.ATTACK: self.handle_attacking,
             CardType.HEAL: self.handle_healing,
             CardType.BUFF: self.handle_buffing,
+            CardType.DEBUFF: self.handle_debuff,
         }
 
     def enter(self, game_state):
@@ -48,30 +49,27 @@ class PlayerTurn(Cursor):
             self.play_card()
         else:
             self.action_handlers[self.player.deck.current_card.type]()
+            self.card_played = True
+            self.player.deck.current_card = None
+            self.cursor_index = 0
 
     def handle_attacking(self):
         self.player.do_attack()
         play_sound("slash.wav")
         pts = self.player.deck.current_card.get_damage()
         self.enemy.apply_damage(pts)
-        self.card_played = True
         self.game_state.add_to_log("You did " + str(pts) + " DMG")
-        self.player.deck.current_card = None
 
     def handle_healing(self):
         self.handle_cancel()
         play_sound("heal.wav")
         self.player.heal(self.player.deck.current_card.get_heal())
-        self.card_played = True
         self.game_state.add_to_log("You healed:" + str(self.player.deck.current_card.get_heal()) + " HP")
-        self.player.deck.current_card = None
 
     def handle_buffing(self):
         play_sound("buff.wav")
         self.player.deck.buff_all_cards(self.player.deck.current_card)
-        self.card_played = True
         self.game_state.add_to_log("Buffed: " + str(self.player.deck.current_card.buff))
-        self.player.deck.current_card = None
 
     def exit_state(self):
         self.card_played = False
@@ -81,3 +79,7 @@ class PlayerTurn(Cursor):
         if rl.is_key_pressed(rl.KEY_ESCAPE):
             self.player.deck.current_card = None
             return
+
+    def handle_debuff(self):
+        play_sound('debuff.wav')
+        self.player.decrease_health(self.player.deck.current_card.get_heal())

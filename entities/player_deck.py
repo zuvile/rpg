@@ -2,18 +2,19 @@ from entities.card import Card, CardType
 import pyray as rl
 from util.sounds import play_sound
 import random
+from animation.animation import Animation
 
 class PlayerDeck:
     def __init__(self):
         self.maximum_hand_size = 3
         self.is_flashing = False
-        self.picked_card = None
         self.flash_duration = 0
         self.current_card = None
+        self.flash_animation = Animation(True, 1)
         self.hand = [
             Card('Strike', CardType.ATTACK, 10, 0, 2),
             Card('Strike', CardType.ATTACK, 10, 0, 2),
-            Card('Heal', CardType.HEAL, 0, 10, 0,),
+            Card('Heal', CardType.HEAL, 0, 10, 0),
             Card('Buff', CardType.BUFF, 0, 0, 0),
         ]
 
@@ -31,8 +32,7 @@ class PlayerDeck:
         self.remove_from_hand.append(index)
 
     def buff_all_cards(self, buff_card):
-        self.is_flashing = True
-        self.flash_duration = 120
+        self.flash_animation.start(rl.get_time())
         for card in self.hand:
             card.set_tmp_buff(buff_card.buff)
 
@@ -49,11 +49,11 @@ class PlayerDeck:
             self.is_flashing = False
         x = start_x
         y = 14 * 32
-        flash_color = rl.WHITE if self.flash_duration % 20 < 10 else rl.RED
+        i = self.flash_animation.eval(rl.get_time())
+        flash_color = rl.WHITE if i == 0 else rl.RED
 
         for index, card in enumerate(self.hand):
-            colour = flash_color if self.flash_duration > 0 else rl.RED
-            card.color = colour
+            card.color = flash_color
             if cursor_index == index:
                 card.draw(x + 32, y - 32)
             else:
@@ -63,7 +63,8 @@ class PlayerDeck:
 
     def in_animation(self):
         moving_cards = [card for card in self.hand if card.is_moving]
-        return self.is_flashing or len(moving_cards) > 0
+        print(self.flash_animation.finished(rl.get_time()))
+        return not self.flash_animation.finished(rl.get_time()) or len(moving_cards) > 0
 
     def clear_buffs(self):
         for card in self.hand:
@@ -74,15 +75,16 @@ class PlayerDeck:
             self.discard_pile.append(self.hand[index])
             self.hand.remove(self.hand[index])
         self.remove_from_hand = []
-
+        self.shuffle(self.pile)
         while len(self.hand) < self.maximum_hand_size and len(self.pile) > 0:
             self.hand.append(self.pile.pop(0))
 
         if len(self.hand) < self.maximum_hand_size:
-            self.discard_pile = self.shuffle(self.discard_pile)
+            self.shuffle(self.discard_pile)
             self.pile += self.discard_pile
 
     def shuffle(self, cards):
         random.shuffle(cards)
 
-        return cards
+    def add_to_pile(self, cards):
+        self.pile += cards

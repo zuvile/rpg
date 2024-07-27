@@ -7,15 +7,13 @@ class CardType(Enum):
     HEAL = 2
     MOVE = 3
     BUFF = 4
+    ADD_TO_ENEMY_PILE = 5
+    ADD_TO_OWN_PILE = 6
+    DEBUFF = 7
 
 
 class Card:
-    def __init__(self, name, type, damage, heal, buff):
-        self.types = [
-            'ATTACK',
-            'HEAL',
-            'BUFF',
-        ]
+    def __init__(self, name, type, damage, heal, buff, card=None, multiplier=0, exhaust=False):
         self.name = name
         self.type = type
         self._damage = damage
@@ -29,6 +27,8 @@ class Card:
         self.y = 0
         self.is_moving = False
         self.move_animation_start = 0
+        self.card = card
+        self.multiplier = multiplier
 
     def play(self):
         self.is_moving = True
@@ -61,7 +61,6 @@ class Card:
             self.y += 32
         if self.y > center_of_screen_y:
             self.y -= 32
-        print(self.x, self.y)
         draw_rectangle(self.x, self.y, 128, 160, self.color)
         draw_text(self.name, self.x + 32, self.y - 32, 20, BLACK)
         draw_text(self.get_description(), self.x + 32, self.y, 12, BLACK)

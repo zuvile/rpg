@@ -3,7 +3,7 @@ from modes.initial_menu_mode import InitialMenuMode
 from actions import Actions
 from util.save import Save
 
-
+#640x360
 init_window(1000, 600, "Game")
 init_audio_device()
 set_target_fps(60)

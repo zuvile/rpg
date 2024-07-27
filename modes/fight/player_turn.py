@@ -7,7 +7,6 @@ from modes.fight.grid import Grid
 class PlayerTurn(Cursor):
     def __init__(self):
         super().__init__()
-        self.current_card = None
         self.player = None
         self.enemy = None
         self.done = False
@@ -28,11 +27,10 @@ class PlayerTurn(Cursor):
         self.game_state = game_state
 
     def play_card(self):
-        card = self.player.deck.cards[self.cursor_index]
+        card = self.player.deck.hand[self.cursor_index]
         if rl.is_key_pressed(rl.KEY_ENTER):
-            self.current_card = card
-            card.play()
-            play_sound("play_card.wav")
+            self.player.deck.current_card = card
+            self.player.deck.play_card(self.cursor_index)
 
     def draw(self):
         if self.card_played and not self.player.in_animation() and not self.player.deck.in_animation():
@@ -44,35 +42,36 @@ class PlayerTurn(Cursor):
         #wait for animations to finish
         if self.player.in_animation() or self.player.deck.in_animation():
             return
-        if self.current_card is None:
-            self.move_cursor_horizontal(len(self.player.deck.cards))
+        self.player.deck.update()
+        if self.player.deck.current_card is None:
+            self.move_cursor_horizontal(len(self.player.deck.hand))
             self.play_card()
         else:
-            self.action_handlers[self.current_card.type]()
+            self.action_handlers[self.player.deck.current_card.type]()
 
     def handle_attacking(self):
         self.player.do_attack()
         play_sound("slash.wav")
-        pts = self.current_card.get_damage()
+        pts = self.player.deck.current_card.get_damage()
         self.enemy.apply_damage(pts)
         self.card_played = True
         self.game_state.add_to_log("You did " + str(pts) + " DMG")
-        self.current_card = None
+        self.player.deck.current_card = None
 
     def handle_healing(self):
         self.handle_cancel()
         play_sound("heal.wav")
-        self.player.heal(self.current_card.get_heal())
+        self.player.heal(self.player.deck.current_card.get_heal())
         self.card_played = True
-        self.game_state.add_to_log("You healed:" + str(self.current_card.get_heal()) + " HP")
-        self.current_card = None
+        self.game_state.add_to_log("You healed:" + str(self.player.deck.current_card.get_heal()) + " HP")
+        self.player.deck.current_card = None
 
     def handle_buffing(self):
         play_sound("buff.wav")
-        self.player.deck.buff_all_cards(self.current_card)
+        self.player.deck.buff_all_cards(self.player.deck.current_card)
         self.card_played = True
-        self.game_state.add_to_log("Buffed: " + str(self.current_card.buff))
-        self.current_card = None
+        self.game_state.add_to_log("Buffed: " + str(self.player.deck.current_card.buff))
+        self.player.deck.current_card = None
 
     def exit_state(self):
         self.card_played = False
@@ -80,5 +79,5 @@ class PlayerTurn(Cursor):
 
     def handle_cancel(self):
         if rl.is_key_pressed(rl.KEY_ESCAPE):
-            self.current_card = None
+            self.player.deck.current_card = None
             return

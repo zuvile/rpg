@@ -65,6 +65,7 @@ class TalkMode(GameMode, Cursor):
 
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
+            print('talk')
             game_state.pop_render_layer()
             return
 
@@ -153,7 +154,8 @@ class TalkMode(GameMode, Cursor):
         draw_rectangle(0, 472, 1000, 128, BLACK)
         draw_text("There's nothing to talk about now", 2 * 40, 13 * 40, 15, WHITE)
         if is_key_pressed(KEY_ENTER):
-            game_state.pop_render_layer()
+            print('talk')
+           # game_state.pop_render_layer()
 
     def draw_scene(self, game_state):
         if self.background is not None:

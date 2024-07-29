@@ -26,6 +26,7 @@ class PlayerTurn(Cursor):
         self.player = game_state.player
         self.enemy = game_state.get_interactable()
         self.game_state = game_state
+        self.player.deck.update()
 
     def play_card(self):
         card = self.player.deck.hand[self.cursor_index]
@@ -74,6 +75,7 @@ class PlayerTurn(Cursor):
     def exit_state(self):
         self.card_played = False
         self.done = False
+        self.player.deck.finish()
 
     def handle_cancel(self):
         if rl.is_key_pressed(rl.KEY_ESCAPE):

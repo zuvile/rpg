@@ -2,15 +2,15 @@ from entities.card import Card, CardType
 import pyray as rl
 from util.sounds import play_sound
 import random
-from animation.animation import Animation
+import copy
+from animation.card_animations import FlashAnimation
 
 class PlayerDeck:
     def __init__(self):
         self.maximum_hand_size = 3
-        self.is_flashing = False
-        self.flash_duration = 0
         self.current_card = None
-        self.flash_animation = Animation(True, 1)
+        self.flash_animation = FlashAnimation()
+
         self.hand = [
             Card('Strike', CardType.ATTACK, 10, 0, 2),
             Card('Strike', CardType.ATTACK, 10, 0, 2),
@@ -29,7 +29,10 @@ class PlayerDeck:
         card = self.hand[index]
         card.play()
         play_sound("play_card.wav")
-        self.remove_from_hand.append(index)
+
+    def finish(self):
+        self.discard_pile = copy.copy(self.hand)
+        self.hand = []
 
     def buff_all_cards(self, buff_card):
         self.flash_animation.start(rl.get_time())
@@ -43,10 +46,6 @@ class PlayerDeck:
         total_cards_width = len(self.hand) * (card_width + spacing) - spacing
         start_x = (screen_width - total_cards_width) // 2
 
-        if self.flash_duration > 0:
-            self.flash_duration -= 1
-        if self.flash_duration == 0:
-            self.is_flashing = False
         x = start_x
         y = 14 * 32
         i = self.flash_animation.eval(rl.get_time())
@@ -62,19 +61,14 @@ class PlayerDeck:
             x += card_width + spacing
 
     def in_animation(self):
-        moving_cards = [card for card in self.hand if card.is_moving]
-        print(self.flash_animation.finished(rl.get_time()))
-        return not self.flash_animation.finished(rl.get_time()) or len(moving_cards) > 0
+        # moving_cards = [card for card in self.hand if card.is_moving]
+        return not self.flash_animation.finished(rl.get_time())
 
     def clear_buffs(self):
         for card in self.hand:
             card.clear_buff()
 
     def update(self):
-        for index in self.remove_from_hand:
-            self.discard_pile.append(self.hand[index])
-            self.hand.remove(self.hand[index])
-        self.remove_from_hand = []
         self.shuffle(self.pile)
         while len(self.hand) < self.maximum_hand_size and len(self.pile) > 0:
             self.hand.append(self.pile.pop(0))

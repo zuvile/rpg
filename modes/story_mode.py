@@ -12,6 +12,7 @@ class StoryMode(TalkMode):
             return
         trees = self.get_dialogue_trees_by_day(game_state.day)
         if trees is None:
+            print('story')
             game_state.pop_render_layer()
             return
 

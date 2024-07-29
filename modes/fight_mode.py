@@ -71,6 +71,7 @@ class FightMode(GameMode, Cursor):
         enemy.is_in_fight = False
         player.rec = self.old_player_coordinates
         enemy.rec = self.old_enemy_coordinates
+        print(game_state)
         game_state.pop_render_layer()
         return
 

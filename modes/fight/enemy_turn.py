@@ -83,7 +83,7 @@ class EnemyTurn:
     def draw_enemy_card(self, card):
         rl.draw_rectangle(480, 64, 128, 160, rl.WHITE)
         rl.draw_text(card.name, 480, 64, 20, rl.BLACK)
-        rl.draw_text(card.get_description(), 480, 96, 12, rl.BLACK)
+        # rl.draw_text(card.get_description(), 480, 96, 12, rl.BLACK)
 
         if rl.get_time() - self.card_animation_start_time > 1:
             self.card_in_animation = False

@@ -1,7 +1,7 @@
 from enum import Enum
 from pyray import *
 from animation.card_animations import MoveAnimation
-
+from util.font import get_font
 
 class CardType(Enum):
     ATTACK = 1
@@ -35,7 +35,7 @@ class Card:
         print('start time set at ' + str(get_time()))
         self.move_animation.start(get_time())
 
-    def draw(self, x, y):
+    def draw(self, x, y, rotation):
         t = self.move_animation.eval(get_time())
         if t != 0:
             center_of_screen_x, center_of_screen_y = get_screen_width() // 2 - 32, get_screen_height() // 3
@@ -44,8 +44,10 @@ class Card:
         else:
             self.x = x
             self.y = y
-        draw_rectangle(self.x, self.y, 128, 160, self.color)
-        draw_text(self.name, self.x + 32, self.y - 32, 20, BLACK)
+        rec = Rectangle(self.x, self.y, 128, 160)
+        draw_rectangle_pro(rec, Vector2(64, 80), rotation, self.color)
+        text_position = Vector2(self.x, self.y)
+        draw_text_pro(get_font('default'), self.name, text_position, Vector2(64, 80), rotation, 20, 1, BLACK)
 
     def get_description(self):
         if self.type == CardType.ATTACK:

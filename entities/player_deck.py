@@ -5,6 +5,7 @@ import random
 import copy
 from animation.card_animations import FlashAnimation
 
+
 class PlayerDeck:
     def __init__(self):
         self.maximum_hand_size = 3
@@ -45,20 +46,32 @@ class PlayerDeck:
         spacing = 0
         total_cards_width = len(self.hand) * (card_width + spacing) - spacing
         start_x = (screen_width - total_cards_width) // 2
+        rotations = self.get_rotations(len(self.hand))
 
         x = start_x
-        y = 14 * 32
+        y = 17 * 32
         i = self.flash_animation.eval(rl.get_time())
         flash_color = rl.WHITE if i == 0 else rl.RED
 
         for index, card in enumerate(self.hand):
             card.color = flash_color
             if cursor_index == index:
-                card.draw(x + 32, y - 32)
+                card.draw(x + 32, y - 32, rotations[index])
             else:
-                card.x, card.y = x + 32,  y
-                card.draw(x + 32,  y)
+                card.x, card.y = x + 32, y
+                card.draw(x + 32, y, rotations[index])
             x += card_width + spacing
+
+    def get_rotations(self, length):
+        if length <= 1:
+            return [0] * length
+        degree_per_card = 90 / length - 1
+        start_angle = -45
+        rotations = []
+        for i in range(length):
+            rotations.append(start_angle + i * degree_per_card)
+
+        return rotations
 
     def in_animation(self):
         # moving_cards = [card for card in self.hand if card.is_moving]

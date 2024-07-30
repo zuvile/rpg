@@ -3,6 +3,7 @@ from pyray import *
 from util import textures
 from util.cursor import Cursor
 from util.textures import load_texture
+from config import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class TalkMode(GameMode, Cursor):
@@ -19,6 +20,10 @@ class TalkMode(GameMode, Cursor):
         self.heart_animation_start_time = 0
         self.liked_choice = False
         self.background = None
+        self.name_pos = (SCREEN_WIDTH // 10, SCREEN_HEIGHT - 96)
+        self.text_pos = (SCREEN_WIDTH // 10, SCREEN_HEIGHT - 96 + 32)
+        self.font_size = 8
+        self.portrait_pos = (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128)
 
     def set_dialogue_trees(self, trees):
         if not self.trees:
@@ -65,7 +70,6 @@ class TalkMode(GameMode, Cursor):
 
         if len(self.tree.children) == 0:
             self.remove_read_dialogue()
-            print('talk')
             game_state.pop_render_layer()
             return
 
@@ -77,12 +81,13 @@ class TalkMode(GameMode, Cursor):
 
     def write_choices(self):
         self.done_reading = False
-        y = 13 * 40  # Adjusted for new window height
+        y = self.text_pos[1]
+        x = self.text_pos[0]
         idx = 0
         for choices in self.tree.children:
             color = GREEN if idx == self.cursor_index else WHITE
-            draw_text(choices.text, 2 * 40, y, 15, color)  # Adjusted X position
-            y += 40  # Increased spacing for choices
+            draw_text(choices.text, x, y, self.font_size, color)  # Adjusted X position
+            y += 32
             idx += 1
 
     def make_choice(self, game_state):
@@ -102,7 +107,7 @@ class TalkMode(GameMode, Cursor):
     # Write text and choices. Return 0 if no choice was made, otherwise return choice index
     def write_text(self, game_state):
         self.set_interactable(game_state, self.tree)
-        #this will probably not work with multiple speakers
+        # this will probably not work with multiple speakers
         if self.showing_heart:
             self.draw_heart(self.tree.speaker, self.liked_choice)
             if get_time() - self.heart_animation_start_time > 2:
@@ -120,10 +125,10 @@ class TalkMode(GameMode, Cursor):
         else:
             self.done_reading = False
         if self.current_interactable is not None:
-            draw_text(self.current_interactable.name.upper(), 2 * 40, 12 * 40, 15, SKYBLUE)
+            draw_text(self.current_interactable.name.upper(), self.name_pos[0], self.name_pos[1], self.font_size,SKYBLUE)
         else:
-            draw_text("ME", 2 * 40, 12 * 40, 15, SKYBLUE)
-        draw_text(pages[self.curr_page], 2 * 40, 13 * 40, 15, WHITE)
+            draw_text("ME", self.name_pos[0], self.name_pos[1], 15, SKYBLUE)
+        draw_text(pages[self.curr_page], self.text_pos[0], self.text_pos[1], self.font_size, WHITE)
         if is_key_pressed(KEY_ENTER):
             self.curr_page += 1
         return 0
@@ -140,22 +145,19 @@ class TalkMode(GameMode, Cursor):
     def draw_portrait(self):
         origin = Vector2(0, 0)
         sub_texture = Rectangle(0, 0, 64, 64)
-        scale = 4
+        scale = 2
         portrait_width = sub_texture.width * scale
-        x = get_screen_width() - portrait_width - 32
-        y = 32 * 11
-        destination = Rectangle(x, y, sub_texture.width * scale, sub_texture.height * scale)
+        destination = Rectangle(self.portrait_pos[0], self.portrait_pos[1], sub_texture.width * scale,
+                                sub_texture.height * scale)
         textures.load_texture(self.current_interactable.portrait)
         portrait_texture = textures.id_to_raylib(self.current_interactable.portrait)
         draw_texture_pro(portrait_texture, sub_texture, destination, origin, 0, WHITE)
 
-
     def write_nothing_say(self, game_state):
-        draw_rectangle(0, 472, 1000, 128, BLACK)
-        draw_text("There's nothing to talk about now", 2 * 40, 13 * 40, 15, WHITE)
+        self.draw_box()
+        draw_text("There's nothing to talk about now", self.text_pos[0], self.text_pos[1], self.font_size, WHITE)
         if is_key_pressed(KEY_ENTER):
-            print('talk')
-           # game_state.pop_render_layer()
+            game_state.pop_render_layer()
 
     def draw_scene(self, game_state):
         if self.background is not None:
@@ -171,14 +173,14 @@ class TalkMode(GameMode, Cursor):
             if self.tree.setup.sound is not None:
                 game_state.play_sound(self.tree.setup.sound)
 
-        draw_rectangle(0, 472, 1000, 128, BLACK)
+        self.draw_box()
 
-    def draw_text_with_border(self, text, x, y, font_size, text_color, border_color):
+    def draw_text_with_border(self, text, x, y, text_color, border_color):
         offsets = [(-1, -1), (-1, 1), (1, -1), (1, 1), (-1, 0), (1, 0), (0, -1), (0, 1)]
         for offset in offsets:
-            draw_text(text, x + offset[0], y + offset[1], font_size, border_color)
+            draw_text(text, x + offset[0], y + offset[1], self.font_size, border_color)
 
-        draw_text(text, x, y, font_size, text_color)
+        draw_text(text, x, y, self.font_size, text_color)
 
     def draw_heart(self, name, liked):
         heart_texture = load_texture('assets/hearts.png')
@@ -193,4 +195,7 @@ class TalkMode(GameMode, Cursor):
             destination = Rectangle(32, 32, 32, 32)
             draw_texture_pro(rl_texture, sub_texture, destination, Vector2(0, 0), 0, WHITE)
 
-        self.draw_text_with_border(name, 64, 32, 20, WHITE, BLACK)
+        self.draw_text_with_border(name, 64, 32, WHITE, BLACK)
+
+    def draw_box(self):
+        draw_rectangle(0, SCREEN_HEIGHT - 96, SCREEN_WIDTH, 96, BLACK)

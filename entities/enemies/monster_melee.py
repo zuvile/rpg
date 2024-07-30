@@ -14,7 +14,7 @@ class MonsterMelee(Enemy):
         self.is_attacking = False
 
     def get_deck(self):
-        card = Card('Bleeding', CardType.DEBUFF, 0, -2, None, 0, True)
+        card = Card('Bleeding', CardType.DEBUFF, 0, 2, None, 0, 0, True)
         deck = [
             Card('Attack', CardType.ATTACK, 3, 0, 1),
             Card('Claw', CardType.ADD_TO_ENEMY_PILE, 0, 0, 0, card, 2)

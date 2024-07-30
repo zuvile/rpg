@@ -5,6 +5,8 @@ from util.sounds import play_sound
 import copy
 from modes.fight_state_manager import FightStateManager
 from effects.effects import Effects
+from config import SCREEN_WIDTH, SCREEN_HEIGHT
+
 
 class FightMode(GameMode, Cursor):
     def __init__(self):
@@ -49,16 +51,16 @@ class FightMode(GameMode, Cursor):
     def handle_loss(self, game_state):
         game_state.tint(RED)
         play_sound('debuff.wav')
-        draw_rectangle(460, 300, 600, 32, WHITE)
-        draw_text("You lose!", 460, 300, 32, BLACK)
+        draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE)
+        draw_text("You loose!", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
             if game_state.fight_from_dialogue:
                 game_state.last_fight_won = False
 
     def handle_win(self, game_state):
-        draw_rectangle(0, 0, 1000, 600, WHITE)
-        draw_text("You win!", 460, 300, 32, BLACK)
+        draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE)
+        draw_text("You win!", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
             if game_state.fight_from_dialogue:
@@ -76,12 +78,11 @@ class FightMode(GameMode, Cursor):
         return
 
     def draw_ui(self, game_state):
-        draw_rectangle(0, 0, 1000, 600, GRAY)
+        draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GRAY)
         draw_texture(self.texture, 0, 0, WHITE)
         log = game_state.get_log()
-        for i in range(len(log)):
-            draw_text(log[i], 25*32, (5+i)*32, 16, BLACK)
-
+        # for i in range(len(log)):
+        #     draw_text(log[i], 25 * 32, (5 + i) * 32, 16, BLACK)
 
     def draw_characters(self, game_state):
         player = game_state.player
@@ -96,11 +97,13 @@ class FightMode(GameMode, Cursor):
         self.old_enemy_coordinates = copy.copy(enemy.rec)
         game_state.camera.begin()
 
-        player.change_position(128, 192)
-        enemy.change_position(672, 192)
+        player.change_position(64, 160)
+        enemy.change_position(SCREEN_WIDTH - 128, 160)
         enemy.is_in_fight = True
         player.is_in_fight = True
 
-
-    def all_animations_done(self, game_state):
-        return not game_state.player.in_animation() and not game_state.get_interactable().in_animation()
+    def all_animations_done(self, game_state, player):
+        player = game_state.player
+        return (not game_state.player.in_animation()
+                and not game_state.get_interactable().in_animation()
+                and not player.deck.in_animation())

@@ -3,6 +3,8 @@ from modes.fight.ai_card_picker import pick_card
 from modes.fight.grid import Grid
 import pyray as rl
 from util.sounds import play_sound
+from copy import deepcopy
+
 
 class EnemyTurn:
     def __init__(self):
@@ -35,7 +37,7 @@ class EnemyTurn:
             self.done = True
             return
 
-        #wait for animations to finish
+        # wait for animations to finish
         if self.enemy.in_animation():
             return
 
@@ -67,7 +69,7 @@ class EnemyTurn:
         self.game_state.shake_cam()
 
     def add_to_player_pile(self):
-        cards = [self.current_card.card for _ in range(3)]
+        cards = [deepcopy(self.current_card.card) for _ in range(self.current_card.multiplier)]
         self.player.deck.add_to_pile(cards)
 
     def handle_healing(self):
@@ -79,13 +81,11 @@ class EnemyTurn:
         self.card_played = True
         self.game_state.add_to_log("Enemy Buffed: " + str(self.current_card.buff))
 
-
     def draw_enemy_card(self, card):
-        rl.draw_rectangle(480, 64, 128, 160, rl.WHITE)
+        rl.draw_rectangle(480, 64, card.width, card.height, rl.WHITE)
         rl.draw_text(card.name, 480, 64, 20, rl.BLACK)
         # rl.draw_text(card.get_description(), 480, 96, 12, rl.BLACK)
 
         if rl.get_time() - self.card_animation_start_time > 1:
             self.card_in_animation = False
             self.card_animation_start_time = 0
-

@@ -20,14 +20,14 @@ class MenuMode(GameMode, Cursor):
         return self.action
 
     def draw_ui(self, options):
-        draw_rectangle(0, 0, 800, 600, BLACK)
+        draw_rectangle(0, 0, 640, 360, BLACK)
 
-        x = 640
+        x = 384
         y = 65
 
         for index, option in enumerate(options):
             colour = RED
             if self.cursor_index == index:
                 colour = GREEN
-            draw_text(option, x, y, 20, colour)
+            draw_text(option, x, y, 8, colour)
             y += 32

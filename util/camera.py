@@ -1,11 +1,12 @@
 from pyray import *
 import random
+from config import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Camera:
     def __init__(self):
         self.camera = Camera2D()
         self.camera.target = Vector2(0, 0)
-        self.camera.offset = Vector2(get_screen_width() / 2, get_screen_height() / 2)
+        self.camera.offset = Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         self.camera.rotation = 0.0
         self.camera.zoom = 2.0
         self.shake_animation_start = 0
@@ -54,7 +55,7 @@ class Camera:
     def reset(self):
         self.camera = Camera2D()
         self.camera.target = Vector2(0, 0)
-        self.camera.offset = Vector2(get_screen_width() / 2, get_screen_height() / 2)
+        self.camera.offset = self.camera.offset = Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         self.camera.rotation = 0.0
         self.camera.zoom = 2.0
         self.shake_animation_start = 0

@@ -38,6 +38,8 @@ class PlayerTurn(Cursor):
         if self.card_played and not self.player.in_animation() and not self.player.deck.in_animation():
             self.done = True
             return
+        self.player.deck.draw_discard()
+        self.player.deck.draw_pile()
         if not self.enemy.in_animation():
             self.player.deck.draw_card_deck(self.cursor_index)
 
@@ -51,7 +53,6 @@ class PlayerTurn(Cursor):
         else:
             self.action_handlers[self.player.deck.current_card.type]()
             self.card_played = True
-            self.player.deck.current_card = None
             self.cursor_index = 0
 
     def handle_attacking(self):
@@ -62,7 +63,6 @@ class PlayerTurn(Cursor):
         self.game_state.add_to_log("You did " + str(pts) + " DMG")
 
     def handle_healing(self):
-        self.handle_cancel()
         play_sound("heal.wav")
         self.player.heal(self.player.deck.current_card.get_heal())
         self.game_state.add_to_log("You healed:" + str(self.player.deck.current_card.get_heal()) + " HP")
@@ -76,11 +76,6 @@ class PlayerTurn(Cursor):
         self.card_played = False
         self.done = False
         self.player.deck.finish()
-
-    def handle_cancel(self):
-        if rl.is_key_pressed(rl.KEY_ESCAPE):
-            self.player.deck.current_card = None
-            return
 
     def handle_debuff(self):
         play_sound('debuff.wav')

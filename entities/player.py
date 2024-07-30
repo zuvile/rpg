@@ -49,6 +49,8 @@ class Player(Character):
         self.hp -= health
         if self.hp <= 0:
             self.dead = True
+        self.is_taking_damage = True
+        self.take_damage_animation_start_time = rl.get_time()
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):

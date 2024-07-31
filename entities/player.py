@@ -4,6 +4,7 @@ from entities.player_deck import PlayerDeck
 from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
 from util.sounds import play_sound
+from entities.personality import InfluenceSeeker
 
 
 class Player(Character):
@@ -20,7 +21,8 @@ class Player(Character):
         self.dead = False
         super().__init__(texture, sub_texture, scale, x, y, self.hp, 32)
         self.deck = PlayerDeck()
-
+        #todo player personality selection
+        self.personality = InfluenceSeeker()
 
     def move(self, game_state):
         if rl.is_key_down(rl.KEY_W):
@@ -50,9 +52,6 @@ class Player(Character):
 
     def move_away_from_enemy(self):
         self.rec.x = self.rec.x - 96
-
-    def set_deck(self, cards):
-        self.deck = PlayerDeck(cards)
 
     def __repr__(self):
         return f"Player({self.rec.x}, {self.rec.y})"

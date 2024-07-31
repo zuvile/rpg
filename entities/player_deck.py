@@ -13,18 +13,21 @@ class PlayerDeck:
         self.maximum_hand_size = 3
         self.current_card = None
         self.flash_animation = FlashAnimation()
-
+        quick_slash = Card('Quick slash', CardType.ATTACK, 15, None, 0, True, True)
         self.hand = [
             Card('Strike', CardType.ATTACK, 10, 0, 2),
-            Card('Strike', CardType.ATTACK, 10, 0, 2),
             Card('Heal', CardType.HEAL, 0, 10, 0),
+            Card('Preparation', CardType.ADD_TO_OWN_PILE, 0, 0, 0, quick_slash, 3),
         ]
 
         self.discard_pile = []
         self.trash_pile = []
+
         self.pile = [
             Card('Strike', CardType.ATTACK, 10, 0, 2),
             Card('Buff', CardType.BUFF, 0, 0, 0),
+            Card('Preparation', CardType.ADD_TO_OWN_PILE, 0, 0, 0, quick_slash, 3),
+            Card('Preparation', CardType.ADD_TO_OWN_PILE, 0, 0, 0, quick_slash, 3)
         ]
 
     def play_card(self, index):

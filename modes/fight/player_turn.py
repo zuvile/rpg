@@ -2,6 +2,7 @@ from util.cursor import Cursor
 import pyray as rl
 from util.sounds import play_sound
 from entities.card import CardType
+from modes.fight.card_gen import add_multi
 
 class PlayerTurn(Cursor):
     def __init__(self):
@@ -17,6 +18,8 @@ class PlayerTurn(Cursor):
             CardType.HEAL: self.handle_healing,
             CardType.BUFF: self.handle_buffing,
             CardType.DEBUFF: self.handle_debuff,
+            CardType.ADD_TO_OWN_PILE: self.add_to_own_pile,
+            CardType.ADD_TO_ENEMY_PILE: self.add_to_enemy_pile
         }
 
     def enter(self, game_state):
@@ -75,3 +78,9 @@ class PlayerTurn(Cursor):
     def handle_debuff(self):
         play_sound('debuff.wav')
         self.player.apply_damage(self.player.deck.current_card.get_heal())
+
+    def add_to_enemy_pile(self):
+        add_multi(self.player.deck.current_card.card, self.player.deck.current_card.multiplier, self.enemy)
+
+    def add_to_own_pile(self):
+        add_multi(self.player.deck.current_card.card, self.player.deck.current_card.multiplier, self.player)

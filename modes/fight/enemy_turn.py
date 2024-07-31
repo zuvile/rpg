@@ -3,6 +3,7 @@ from modes.fight.ai_card_picker import pick_card
 import pyray as rl
 from util.sounds import play_sound
 from copy import deepcopy
+from modes.fight.card_gen import add_multi
 
 
 class EnemyTurn:
@@ -20,7 +21,8 @@ class EnemyTurn:
             CardType.ATTACK: self.handle_attacking,
             CardType.HEAL: self.handle_healing,
             CardType.BUFF: self.handle_buffing,
-            CardType.ADD_TO_ENEMY_PILE: self.add_to_player_pile
+            CardType.ADD_TO_ENEMY_PILE: self.add_to_player_pile,
+            CardType.ADD_TO_OWN_PILE: self.add_to_own_pile
         }
 
     def enter(self, game_state):
@@ -64,8 +66,10 @@ class EnemyTurn:
         self.game_state.add_to_log("Enemy did " + str(pts) + " DMG")
 
     def add_to_player_pile(self):
-        cards = [deepcopy(self.enemy.deck.current_card.card) for _ in range(self.enemy.deck.current_card.multiplier)]
-        self.player.deck.add_to_pile(cards)
+        add_multi(self.enemy.deck.current_card.card, self.enemy.deck.current_card.multiplier, self.player)
+
+    def add_to_own_pile(self):
+        add_multi(self.enemy.deck.current_card.card, self.enemy.deck.current_card.multiplier, self.enemy)
 
     def handle_healing(self):
         self.enemy.heal(self.enemy.deck.current_card.get_heal())

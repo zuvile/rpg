@@ -119,7 +119,7 @@ class Character(Entity):
         if self.moved:
             self.move_away_from_enemy()
             self.moved = False
-        self.deck.finish()
+        self.deck.finish_turn()
 
     def __repr__(self):
         return f"Character({self.rec.x}, {self.rec.y})"

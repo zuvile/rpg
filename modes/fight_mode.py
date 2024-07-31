@@ -24,11 +24,13 @@ class FightMode(GameMode, Cursor):
             return
 
         game_state.camera.begin_fight_cam()
-        self.draw_ui(game_state)
-        self.draw_characters(game_state)
+
 
         if not game_state.player.is_alive() or not game_state.get_interactable().is_alive():
             self.handle_end(game_state)
+        else:
+            self.draw_ui(game_state)
+            self.draw_characters(game_state)
 
         if self.start_of_fight:
             self.setup(game_state)
@@ -51,6 +53,9 @@ class FightMode(GameMode, Cursor):
             game_state.player.update()
             game_state.get_interactable().update()
             return
+
+        game_state.player.deck.finish_battle()
+        game_state.get_interactable().deck.finish_battle()
 
         if not game_state.player.is_alive():
             self.handle_loss(game_state)

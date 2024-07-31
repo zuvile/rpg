@@ -16,7 +16,7 @@ class MonsterMelee(Enemy):
         self.deck = EnemyDeck(self.get_cards())
 
     def get_cards(self):
-        card = Card('Bleeding', CardType.DEBUFF, 0, 2, None, 0, 0, True)
+        card = Card('Bleeding', CardType.DEBUFF, 0, 2, None, 0, 0, True, True)
         deck = [
             Card('Attack', CardType.ATTACK, 3, 0, 1),
             Card('Claw', CardType.ADD_TO_ENEMY_PILE, 0, 0, 0, card, 2)

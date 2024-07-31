@@ -21,7 +21,7 @@ class CardParams(Enum):
 
 
 class Card:
-    def __init__(self, name, type, damage, heal, buff, card=None, multiplier=0, exhaust=False):
+    def __init__(self, name, type, damage, heal, buff, card=None, multiplier=0, exhaust=False, temp=False):
         self.name = name
         self.type = type
         self._damage = damage
@@ -37,6 +37,7 @@ class Card:
         self.multiplier = multiplier
         self.move_animation = MoveAnimation()
         self.exhaust = exhaust
+        self.temp = temp
         self.width = CardParams.WIDTH.value
         self.height = CardParams.HEIGHT.value
 

@@ -5,7 +5,7 @@ import random
 import copy
 from animation.card_animations import FlashAnimation
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
-from util.deck import update_deck
+from util.deck import update_deck, after_battle
 
 
 class PlayerDeck:
@@ -32,12 +32,16 @@ class PlayerDeck:
         self.current_card.play()
         play_sound("play_card.wav")
 
-    def finish(self):
+    def finish_turn(self):
         if self.current_card.exhaust:
+            self.trash_pile.append(self.current_card)
             self.hand.remove(self.current_card)
         self.discard_pile = copy.copy(self.hand)
         self.hand = []
         self.current_card = None
+
+    def finish_battle(self):
+        after_battle(self)
 
     def buff_all_cards(self, buff_card):
         self.flash_animation.start(rl.get_time())

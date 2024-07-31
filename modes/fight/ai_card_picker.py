@@ -1,12 +1,10 @@
-from util.path_finding import get_distance
 from entities.card import CardType
 
-#todo refactor to always use tuples
-def pick_card(deck, attacker_pos, defender_pos):
-    best_card = None
 
-    #tmp for testing purposes
-    for card in deck:
+def pick_card(deck):
+    best_card = deck.hand[0]
+
+    for card in deck.hand:
         if card.type == CardType.ADD_TO_ENEMY_PILE:
             return card
         if card.type == CardType.ATTACK:

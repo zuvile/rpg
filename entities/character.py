@@ -3,9 +3,19 @@ import pyray as rl
 from util import textures as t
 from maps.map import MapType
 import math
+from enum import Enum
+from entities.enemy_deck import EnemyDeck
+
+
+class CharacterBattleStatus(Enum):
+    IDLE = 0
+    HEALING = 1
+    ATTACKING = 2
+    TAKING_DAMAGE = 3
+
 
 class Character(Entity):
-    def __init__(self, texture, sub_texture, scale, deck, current_map, hp, x, y, size=32):
+    def __init__(self, texture, sub_texture, scale, current_map, hp, x, y, size=32):
         super().__init__(x, y, size)
         self.hp = hp
         self.dead = False
@@ -14,19 +24,21 @@ class Character(Entity):
         self.sub_texture = sub_texture
         self.max_hp = hp
         self.is_in_fight = False
-        self.deck = deck
+        self.deck = None
         self.current_map: MapType = current_map
-        self.is_healing = False
-        self.is_attacking = False
-        self.is_healing = False
-        self.is_attacking = False
-        self.is_taking_damage = False
-        self.heal_animation_start_time = 0
-        self.move_animation_start_time = 0
-        self.attack_animation_start_time = 0
-        self.take_damage_animation_start_time = 0
+        self.animation_start_time = 0
+        self.status = CharacterBattleStatus.IDLE
+        self.moved = False
+
+    def set_deck(self, cards):
+        self.deck = EnemyDeck(cards)
+
+    def set_status(self, status: CharacterBattleStatus):
+        self.status = status
 
     def apply_damage(self, damage):
+        self.animation_start_time = rl.get_time()
+        self.status = CharacterBattleStatus.TAKING_DAMAGE
         self.hp -= damage
         if self.hp <= 0:
             self.hp = 0
@@ -35,11 +47,14 @@ class Character(Entity):
         return self.hp > 0
 
     def add_health(self, health):
+        self.animation_start_time = rl.get_time()
+        self.status = CharacterBattleStatus.HEALING
         self.hp += health
-        if self.hp > 30:
-            self.hp = 30
+        if health + self.hp > self.max_hp:
+            self.hp = self.max_hp
 
     def draw(self, color=rl.WHITE):
+        self.update()
         t.load_texture(self.texture)
         texture = t.id_to_raylib(self.texture)
         destination = rl.Rectangle(self.rec.x, self.rec.y, self.sub_texture.width * self.scale,
@@ -51,28 +66,10 @@ class Character(Entity):
         rl.draw_texture_pro(texture, sub_texture, destination, origin, rotation, color)
 
     def draw_in_battle(self):
-        draw_color = rl.WHITE
+        draw_color = self.get_draw_color()
         if self.is_in_fight:
             self.draw_health_bar(rl.GREEN)
-            draw_color = rl.WHITE
-            if self.is_healing:
-                draw_color = rl.GREEN
-                if rl.get_time() - self.heal_animation_start_time > 1:
-                    self.is_healing = False
-                    draw_color = rl.WHITE
-            elif self.is_attacking:
-                if rl.get_time() - self.attack_animation_start_time > 1:
-                    self.is_attacking = False
-                    self.move_away_from_enemy()
-                    draw_color = rl.WHITE
-                    t.load_texture(self.texture)
-            elif self.is_taking_damage:
-                draw_color = rl.RED
-                if rl.get_time() - self.take_damage_animation_start_time > 1:
-                    self.is_taking_damage = False
-                    draw_color = rl.WHITE
-                    t.load_texture(self.texture)
-        print(f'draw_color {draw_color}')
+
         texture = t.id_to_raylib(self.texture)
         destination = rl.Rectangle(self.rec.x, self.rec.y, self.sub_texture.width * 2, self.sub_texture.height * 2)
         origin = rl.Vector2(0, 0)
@@ -80,6 +77,20 @@ class Character(Entity):
         sub_texture = rl.Rectangle(self.sub_texture.x, self.sub_texture.y, self.sub_texture.width,
                                    self.sub_texture.height)
         rl.draw_texture_pro(texture, sub_texture, destination, origin, rotation, draw_color)
+
+    def get_draw_color(self):
+        if self.status == CharacterBattleStatus.HEALING:
+            return rl.GREEN
+        if self.status == CharacterBattleStatus.TAKING_DAMAGE:
+            return rl.RED
+        if self.status == CharacterBattleStatus.ATTACKING:
+            return rl.BLUE
+        if self.status == CharacterBattleStatus.IDLE:
+            return rl.WHITE
+
+    def update(self):
+        if rl.get_time() - self.animation_start_time > 2:
+            self.status = CharacterBattleStatus.IDLE
 
     def set_map(self, map: MapType):
         self.current_map = map
@@ -96,12 +107,19 @@ class Character(Entity):
         rl.draw_rectangle(x + border_thickness, y + border_thickness, hp, 8, color)
 
     def in_animation(self):
-        return self.is_attacking or self.is_healing or self.is_taking_damage
+        return self.status != CharacterBattleStatus.IDLE
 
-    def do_attack(self):
-        self.is_attacking = True
+    def start_attack(self):
         self.move_towards_enemy()
-        self.attack_animation_start_time = rl.get_time()
+        self.moved = True
+        self.status = CharacterBattleStatus.ATTACKING
+        self.animation_start_time = rl.get_time()
+
+    def end_attack(self):
+        if self.moved:
+            self.move_away_from_enemy()
+            self.moved = False
+        self.deck.finish()
 
     def __repr__(self):
         return f"Character({self.rec.x}, {self.rec.y})"

@@ -5,6 +5,7 @@ from util.collision import should_init_fight, should_init_dialogue
 import pyray as rl
 from util.sounds import play_sound
 
+
 class Player(Character):
     def __init__(self, x=0, y=0):
         texture = 'assets/rogues.png'
@@ -17,15 +18,9 @@ class Player(Character):
         self.magic = 1
         self.mana = 10
         self.dead = False
-        #todo player deck is diffrent from normal decks, what do?
+        super().__init__(texture, sub_texture, scale, x, y, self.hp, 32)
         self.deck = PlayerDeck()
-        self.move_speed = 1.0
-        self.last_move_time = 0
-        self.path_index = 0
-        self.path = []
-        self.is_walking = False
 
-        super().__init__(texture, sub_texture, scale, self.deck, x, y, self.hp, 32)
 
     def move(self, game_state):
         if rl.is_key_down(rl.KEY_W):
@@ -36,21 +31,6 @@ class Player(Character):
             return self.move_player(-2, 0, game_state)
         if rl.is_key_down(rl.KEY_D):
             return self.move_player(2, 0, game_state)
-
-
-    def heal(self, health):
-        self.hp += health
-        if self.hp > 100:
-            self.hp = 100
-            self.is_healing = True
-            self.heal_animation_start_time = rl.get_time()
-
-    def decrease_health(self, health):
-        self.hp -= health
-        if self.hp <= 0:
-            self.dead = True
-        self.is_taking_damage = True
-        self.take_damage_animation_start_time = rl.get_time()
 
     def move_player(self, dx, dy, game_state):
         if self.can_move(dx, dy, game_state):
@@ -70,6 +50,9 @@ class Player(Character):
 
     def move_away_from_enemy(self):
         self.rec.x = self.rec.x - 96
+
+    def set_deck(self, cards):
+        self.deck = PlayerDeck(cards)
 
     def __repr__(self):
         return f"Player({self.rec.x}, {self.rec.y})"

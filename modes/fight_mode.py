@@ -26,12 +26,10 @@ class FightMode(GameMode, Cursor):
         game_state.camera.begin_fight_cam()
         self.draw_ui(game_state)
         self.draw_characters(game_state)
-        if not game_state.player.is_alive() and self.all_animations_done(game_state):
-            self.handle_loss(game_state)
-            return
-        if not game_state.get_interactable().is_alive() and self.all_animations_done(game_state):
-            self.handle_win(game_state)
-            return
+
+        if not game_state.player.is_alive() or not game_state.get_interactable().is_alive():
+            self.handle_end(game_state)
+
         if self.start_of_fight:
             self.setup(game_state)
             self.start_of_fight = False
@@ -47,6 +45,17 @@ class FightMode(GameMode, Cursor):
             self.player_turn = not self.player_turn
 
         end_mode_2d()
+
+    def handle_end(self, game_state):
+        if not self.all_animations_done:
+            game_state.player.update()
+            game_state.get_interactable().update()
+            return
+
+        if not game_state.player.is_alive():
+            self.handle_loss(game_state)
+        else:
+            self.handle_win(game_state)
 
     def handle_loss(self, game_state):
         game_state.tint(RED)
@@ -102,7 +111,7 @@ class FightMode(GameMode, Cursor):
         enemy.is_in_fight = True
         player.is_in_fight = True
 
-    def all_animations_done(self, game_state, player):
+    def all_animations_done(self, game_state):
         player = game_state.player
         return (not game_state.player.in_animation()
                 and not game_state.get_interactable().in_animation()

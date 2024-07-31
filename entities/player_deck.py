@@ -5,6 +5,7 @@ import random
 import copy
 from animation.card_animations import FlashAnimation
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
+from util.deck import update_deck
 
 
 class PlayerDeck:
@@ -27,10 +28,8 @@ class PlayerDeck:
         ]
 
     def play_card(self, index):
-        card = self.hand[index]
-        card.play()
-        print('anim')
-        print(card.animations_finished())
+        self.current_card = self.hand[index]
+        self.current_card.play()
         play_sound("play_card.wav")
 
     def finish(self):
@@ -89,11 +88,7 @@ class PlayerDeck:
             card.clear_buff()
 
     def update(self):
-        if len(self.pile) < self.maximum_hand_size:
-            self.pile += self.discard_pile
-        self.shuffle(self.pile)
-        while len(self.hand) < self.maximum_hand_size and len(self.pile) > 0:
-            self.hand.append(self.pile.pop(0))
+        update_deck(self)
 
     def shuffle(self, cards):
         random.shuffle(cards)

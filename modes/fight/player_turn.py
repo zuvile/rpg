@@ -2,7 +2,6 @@ from util.cursor import Cursor
 import pyray as rl
 from util.sounds import play_sound
 from entities.card import CardType
-from modes.fight.grid import Grid
 
 class PlayerTurn(Cursor):
     def __init__(self):
@@ -12,8 +11,6 @@ class PlayerTurn(Cursor):
         self.done = False
         self.card_played = False
         self.game_state = None
-        self.grid = Grid()
-        self.has_moved = False
 
         self.action_handlers = {
             CardType.ATTACK: self.handle_attacking,
@@ -29,9 +26,7 @@ class PlayerTurn(Cursor):
         self.player.deck.update()
 
     def play_card(self):
-        card = self.player.deck.hand[self.cursor_index]
         if rl.is_key_pressed(rl.KEY_ENTER):
-            self.player.deck.current_card = card
             self.player.deck.play_card(self.cursor_index)
 
     def draw(self):
@@ -56,7 +51,7 @@ class PlayerTurn(Cursor):
             self.cursor_index = 0
 
     def handle_attacking(self):
-        self.player.do_attack()
+        self.player.start_attack()
         play_sound("slash.wav")
         pts = self.player.deck.current_card.get_damage()
         self.enemy.apply_damage(pts)
@@ -64,7 +59,7 @@ class PlayerTurn(Cursor):
 
     def handle_healing(self):
         play_sound("heal.wav")
-        self.player.heal(self.player.deck.current_card.get_heal())
+        self.player.add_health(self.player.deck.current_card.get_heal())
         self.game_state.add_to_log("You healed:" + str(self.player.deck.current_card.get_heal()) + " HP")
 
     def handle_buffing(self):
@@ -75,8 +70,8 @@ class PlayerTurn(Cursor):
     def exit_state(self):
         self.card_played = False
         self.done = False
-        self.player.deck.finish()
+        self.player.end_attack()
 
     def handle_debuff(self):
         play_sound('debuff.wav')
-        self.player.decrease_health(self.player.deck.current_card.get_heal())
+        self.player.apply_damage(self.player.deck.current_card.get_heal())

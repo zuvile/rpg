@@ -4,6 +4,7 @@ from maps.map import Map
 from util.textures import load_texture
 from maps.map import MapType
 
+
 class CastleGrounds(Map):
     def __init__(self):
         self.enemies = []
@@ -32,7 +33,7 @@ class CastleGrounds(Map):
             y += 1
 
     def add_enemies(self):
-        self.enemies.append(MonsterMelee(self, 8 * 32, 8 * 32))
+        self.enemies.append(MonsterMelee(self, 3 * 32, 3 * 32))
 
     def clear_dead(self):
         self.enemies = [enemy for enemy in self.enemies if enemy.is_alive()]

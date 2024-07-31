@@ -67,6 +67,7 @@ class PlayerTurn(Cursor):
 
     def handle_buffing(self):
         play_sound("buff.wav")
+        self.player.start_buffing()
         self.player.deck.buff_all_cards(self.player.deck.current_card)
         self.game_state.add_to_log("Buffed: " + str(self.player.deck.current_card.buff))
 
@@ -77,10 +78,13 @@ class PlayerTurn(Cursor):
 
     def handle_debuff(self):
         play_sound('debuff.wav')
+        self.player.start_buffing()
         self.player.apply_damage(self.player.deck.current_card.get_heal())
 
     def add_to_enemy_pile(self):
+        self.player.start_buffing()
         add_multi(self.player.deck.current_card.card, self.player.deck.current_card.multiplier, self.enemy)
 
     def add_to_own_pile(self):
+        self.player.start_buffing()
         add_multi(self.player.deck.current_card.card, self.player.deck.current_card.multiplier, self.player)

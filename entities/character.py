@@ -12,6 +12,7 @@ class CharacterBattleStatus(Enum):
     HEALING = 1
     ATTACKING = 2
     TAKING_DAMAGE = 3
+    BUFFING = 4
 
 
 class Character(Entity):
@@ -79,14 +80,15 @@ class Character(Entity):
         rl.draw_texture_pro(texture, sub_texture, destination, origin, rotation, draw_color)
 
     def get_draw_color(self):
+        colour = rl.WHITE
         if self.status == CharacterBattleStatus.HEALING:
             return rl.GREEN
         if self.status == CharacterBattleStatus.TAKING_DAMAGE:
             return rl.RED
         if self.status == CharacterBattleStatus.ATTACKING:
             return rl.BLUE
-        if self.status == CharacterBattleStatus.IDLE:
-            return rl.WHITE
+
+        return colour
 
     def update(self):
         if rl.get_time() - self.animation_start_time > 2:
@@ -113,6 +115,10 @@ class Character(Entity):
         self.move_towards_enemy()
         self.moved = True
         self.status = CharacterBattleStatus.ATTACKING
+        self.animation_start_time = rl.get_time()
+
+    def start_buffing(self):
+        self.status = CharacterBattleStatus.BUFFING
         self.animation_start_time = rl.get_time()
 
     def end_attack(self):

@@ -13,7 +13,7 @@ class PlayerDeck:
         self.maximum_hand_size = 3
         self.current_card = None
         self.flash_animation = FlashAnimation()
-        quick_slash = Card('Quick slash', CardType.ATTACK, 15, None, 0, True, True)
+        quick_slash = Card('Quick slash', CardType.ATTACK, 15, None, 0, True, True, True, True)
         self.hand = [
             Card('Strike', CardType.ATTACK, 10, 0, 2),
             Card('Heal', CardType.HEAL, 0, 10, 0),

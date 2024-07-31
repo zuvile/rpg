@@ -25,12 +25,12 @@ class FightMode(GameMode, Cursor):
 
         game_state.camera.begin_fight_cam()
 
-
         if not game_state.player.is_alive() or not game_state.get_interactable().is_alive():
             self.handle_end(game_state)
-        else:
-            self.draw_ui(game_state)
-            self.draw_characters(game_state)
+            return
+
+        self.draw_ui(game_state)
+        self.draw_characters(game_state)
 
         if self.start_of_fight:
             self.setup(game_state)
@@ -65,7 +65,7 @@ class FightMode(GameMode, Cursor):
     def handle_loss(self, game_state):
         game_state.tint(RED)
         play_sound('debuff.wav')
-        draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE)
+        draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RED)
         draw_text("You loose!", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 32, BLACK)
         if is_key_pressed(KEY_ENTER):
             self.handle_end_of_fight(game_state)
@@ -87,7 +87,6 @@ class FightMode(GameMode, Cursor):
         enemy.is_in_fight = False
         player.rec = self.old_player_coordinates
         enemy.rec = self.old_enemy_coordinates
-        print(game_state)
         game_state.pop_render_layer()
         return
 
